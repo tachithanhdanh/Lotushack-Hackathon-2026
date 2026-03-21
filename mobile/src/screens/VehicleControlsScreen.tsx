@@ -1,105 +1,114 @@
 import React from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Card, Divider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Car360Viewer from "../components/Car360Viewer";
+
+// Public demo images from Scaleflex js-cloudimage-360-view (36 frames)
+const CAR_360_FRAMES = Array.from({ length: 64 }, (_, i) =>
+  `https://cdn.honda.com.vn/automobile-versions/Image360/October2024/1729591947/${i}.png`
+);
 
 export default function VehicleControlsScreen() {
   return (
     <SafeAreaView style={styles.screen}>
-      <Card>
-        <Card.Title title="Điểm dịch vụ" subtitle="Xe đang đỗ" />
-        <Card.Content>
-          <View style={styles.heroRow}>
-            <View style={styles.carBoxLight}>
-              <Text style={{ color: "#6b7280" }}>Hình xe (demo)</Text>
-            </View>
-            <View style={{ flex: 1, marginLeft: 12 }}>
-              <RowItem
-                label="Điều khiển"
-                onPress={() => Alert.alert("Điều khiển")}
-              />
-              <Divider />
-              <RowItem
-                label="Điều hoà"
-                onPress={() => Alert.alert("Điều hoà")}
-              />
-              <Divider />
-              <RowItem
-                label="Vị trí"
-                onPress={() => Alert.alert("Vị trí hiện tại")}
-              />
-              <Divider />
-              <RowItem
-                label="Triệu hồi"
-                onPress={() => Alert.alert("Triệu hồi")}
-              />
-              <Divider />
-              <RowItem label="Bảo mật" onPress={() => Alert.alert("Bảo mật")} />
-              <Divider />
-              <RowItem
-                label="Nâng cấp"
-                onPress={() => Alert.alert("Nâng cấp")}
-              />
-              <Divider />
-              <RowItem label="Dịch vụ" onPress={() => Alert.alert("Dịch vụ")} />
-            </View>
-          </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Card style={styles.viewerCard}>
+          <Card.Title title="Xem xe 360°" subtitle="Vuot trai / phai de xoay" />
+          <Card.Content>
+            <Car360Viewer images={CAR_360_FRAMES} />
+          </Card.Content>
+        </Card>
 
-          <View style={{ height: 12 }} />
-          <View style={styles.quickRow}>
-            <Pressable
-              style={styles.lightBtn}
-              onPress={() => Alert.alert("Đèn nháy")}
-            >
-              <Text style={styles.lightBtnText}>Đèn nháy</Text>
-            </Pressable>
-            <Pressable
-              style={styles.lightBtn}
-              onPress={() => Alert.alert("Còi")}
-            >
-              <Text style={styles.lightBtnText}>Còi</Text>
-            </Pressable>
-            <Pressable
-              style={styles.lightBtn}
-              onPress={() => Alert.alert("Khởi động")}
-            >
-              <Text style={styles.lightBtnText}>Khởi động</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.lightBtn, { borderColor: "#22c55e" }]}
-              onPress={() => Alert.alert("Tìm điểm dịch vụ gần đây")}
-            >
-              <Text style={[styles.lightBtnText, { color: "#16a34a" }]}>
-                Điểm dịch vụ gần đây
-              </Text>
-            </Pressable>
-          </View>
-        </Card.Content>
-      </Card>
+        <View style={styles.spacer} />
+
+        <Card>
+          <Card.Title title="Diem dich vu" subtitle="Xe dang do" />
+          <Card.Content>
+            <RowItem
+              label="Dieu khien"
+              onPress={() => Alert.alert("Dieu khien")}
+            />
+            <Divider />
+            <RowItem
+              label="Dieu hoa"
+              onPress={() => Alert.alert("Dieu hoa")}
+            />
+            <Divider />
+            <RowItem
+              label="Vi tri"
+              onPress={() => Alert.alert("Vi tri hien tai")}
+            />
+            <Divider />
+            <RowItem
+              label="Trieu hoi"
+              onPress={() => Alert.alert("Trieu hoi")}
+            />
+            <Divider />
+            <RowItem label="Bao mat" onPress={() => Alert.alert("Bao mat")} />
+            <Divider />
+            <RowItem
+              label="Nang cap"
+              onPress={() => Alert.alert("Nang cap")}
+            />
+            <Divider />
+            <RowItem label="Dich vu" onPress={() => Alert.alert("Dich vu")} />
+
+            <View style={styles.spacer} />
+
+            <View style={styles.quickRow}>
+              <Pressable
+                style={styles.lightBtn}
+                onPress={() => Alert.alert("Den nhay")}
+              >
+                <Text style={styles.lightBtnText}>Den nhay</Text>
+              </Pressable>
+              <Pressable
+                style={styles.lightBtn}
+                onPress={() => Alert.alert("Coi")}
+              >
+                <Text style={styles.lightBtnText}>Coi</Text>
+              </Pressable>
+              <Pressable
+                style={styles.lightBtn}
+                onPress={() => Alert.alert("Khoi dong")}
+              >
+                <Text style={styles.lightBtnText}>Khoi dong</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.lightBtn, styles.lightBtnGreen]}
+                onPress={() => Alert.alert("Tim diem dich vu gan day")}
+              >
+                <Text style={[styles.lightBtnText, styles.lightBtnTextGreen]}>
+                  Diem dich vu gan day
+                </Text>
+              </Pressable>
+            </View>
+          </Card.Content>
+        </Card>
+
+        <View style={styles.spacer} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, padding: 16, backgroundColor: "#fff" },
-  heroRow: { flexDirection: "row" },
-  carBoxLight: {
-    width: 140,
-    height: 140,
-    backgroundColor: "#f3f4f6",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  quickRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 12 },
+  viewerCard: { marginBottom: 0 },
+  spacer: { height: 12 },
+  quickRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 12, marginHorizontal: -4 },
   lightBtn: {
     borderWidth: 1,
     borderColor: "#e5e7eb",
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 10,
+    margin: 4,
   },
+  lightBtnGreen: { borderColor: "#22c55e" },
   lightBtnText: { color: "#111827" },
+  lightBtnTextGreen: { color: "#16a34a" },
 });
 
 function RowItem({ label, onPress }: { label: string; onPress?: () => void }) {

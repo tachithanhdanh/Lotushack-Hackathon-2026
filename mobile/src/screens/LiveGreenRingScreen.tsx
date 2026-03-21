@@ -1,74 +1,92 @@
 import React from "react";
-import { Button, Card, ProgressBar } from "react-native-paper";
+import {
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, Text, View } from "react-native";
-import { Colors as colors } from "../theme/colors";
+import { Colors } from "../theme/colors";
+import { useLiveGreenData } from "../hooks/useLiveGreenData";
+import { MOCK_CAR_360_IMAGES } from "../constants/mock_live_green";
+import Car360Viewer from "../components/Car360Viewer";
+import CarInfoCard from "../components/CarInfoCard";
+import DailyMissionMonitor from "../components/DailyMissionMonitor";
+import MissionProgressSection from "../components/MissionProgressSection";
+import BottomTabBar, { TabItem } from "../components/BottomTabBar";
+
+const SCREEN_W = Dimensions.get("window").width;
+
+const TABS: TabItem[] = [
+  { key: "home", icon: "home", label: "Home" },
+  { key: "journey", icon: "navigation-variant", label: "Journey" },
+  { key: "impacts", icon: "leaf", label: "Impacts" },
+  { key: "rewards", icon: "gift", label: "Rewards" },
+];
 
 export default function LiveGreenRingScreen() {
-  const [a, setA] = React.useState(false);
-  const [b, setB] = React.useState(false);
-  const [c, setC] = React.useState(false);
-  const tasksDone = [a, b, c].filter(Boolean).length;
-  const pct = Math.round((tasksDone / 3) * 100);
-  const basePts = tasksDone * 5;
-  const streakBonus = pct === 100 ? 10 : 0;
+  const { data, loading, refresh } = useLiveGreenData();
+
   return (
-    <SafeAreaView style={styles.screen}>
-      <Card style={{ backgroundColor: colors.surface }}>
-        <Card.Title
-          title={`Hôm nay: ${pct}%`}
-          subtitle={`Điểm: ${basePts}+${streakBonus}`}
-        />
-        <Card.Content>
-          <Text style={styles.subtitle}>
-            Hoàn thành 3 nhiệm vụ để lấp vòng.
-          </Text>
-          <View style={{ height: 8 }} />
-          <ProgressBar
-            progress={pct / 100}
-            color={pct === 100 ? colors.success : colors.primary}
-            style={{
-              height: 10,
-              borderRadius: 8,
-              backgroundColor: colors.card,
-            }}
+    <SafeAreaView style={styles.safe} edges={["top"]}>
+      <ScrollView
+        style={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refresh} />
+        }
+      >
+        {/* ── Header ─────────────────────────────────────── */}
+        <View style={styles.header}>
+          <Text style={styles.greeting}>Good morning, Ngoc!</Text>
+          <CarInfoCard vehicle={data.vehicle} />
+        </View>
+
+        {/* ── Hero: 360° car viewer ────────────────────────── */}
+        <View style={styles.hero}>
+          <Car360Viewer
+            images={MOCK_CAR_360_IMAGES}
+            width={SCREEN_W - 40}
+            height={200}
           />
-          <View style={{ height: 12 }} />
-          <Button
-            mode={a ? "contained" : "outlined"}
-            buttonColor={a ? colors.success : undefined}
-            onPress={() => setA((v) => !v)}
-          >
-            {a ? "✓ " : ""}ETC qua trạm (auto)
-          </Button>
-          <View style={{ height: 8 }} />
-          <Button
-            mode={b ? "contained" : "outlined"}
-            buttonColor={b ? colors.success : undefined}
-            onPress={() => setB((v) => !v)}
-          >
-            {b ? "✓ " : ""}Khởi hành trước 7:30 AM
-          </Button>
-          <View style={{ height: 8 }} />
-          <Button
-            mode={c ? "contained" : "outlined"}
-            buttonColor={c ? colors.success : undefined}
-            onPress={() => setC((v) => !v)}
-          >
-            {c ? "✓ " : ""}Đỗ xe (payment API)
-          </Button>
-          <View style={{ height: 16 }} />
-          <Text style={{ color: colors.textMuted }}>
-            Quy tắc: ≥70% trước 23:59 sẽ tăng streak. Đạt 100% nhận +10 điểm
-            thưởng.
-          </Text>
-        </Card.Content>
-      </Card>
+        </View>
+
+        {/* ── Daily mission stat cards ─────────────────────── */}
+        <DailyMissionMonitor stats={data.stats} />
+
+        {/* ── Progress ring + mission list ─────────────────── */}
+        <MissionProgressSection
+          missions={data.missions}
+          loading={loading}
+          onRefresh={refresh}
+        />
+
+        <View style={styles.bottomPad} />
+      </ScrollView>
+
+      {/* ── Bottom tab bar ───────────────────────────────── */}
+      <BottomTabBar tabs={TABS} activeKey="home" onPress={() => {}} />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background, padding: 16 },
-  subtitle: { fontSize: 16, color: colors.textMuted },
+  safe: { flex: 1, backgroundColor: Colors.background },
+  scroll: { flex: 1 },
+  header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },
+  greeting: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  hero: {
+    marginHorizontal: 20,
+    marginTop: 12,
+    marginBottom: 12,
+    alignItems: "center",
+  },
+  bottomPad: { height: 16 },
 });
