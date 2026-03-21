@@ -22,13 +22,13 @@ function RouteCard({ title, time, co2, points, onSelect }: any) {
   );
 }
 
-export default function RouteSuggestionScreen({ navigation }: any) {
+export function RouteSuggestionContent({ navigation }: any) {
   const [from, setFrom] = React.useState("Nhà");
   const [to, setTo] = React.useState("Cơ quan");
   const [show, setShow] = React.useState(false);
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <View style={styles.inner}>
       <Card style={{ backgroundColor: colors.surface }}>
         <Card.Title title="Tìm tuyến đường xanh" />
         <Card.Content>
@@ -108,10 +108,19 @@ export default function RouteSuggestionScreen({ navigation }: any) {
           />
         </View>
       )}
+    </View>
+  );
+}
+
+export default function RouteSuggestionScreen({ navigation }: any) {
+  return (
+    <SafeAreaView style={styles.screen}>
+      <RouteSuggestionContent navigation={navigation} />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background, padding: 16 },
+  inner: { flex: 1, padding: 16 },
 });

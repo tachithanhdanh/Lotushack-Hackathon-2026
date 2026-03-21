@@ -104,6 +104,20 @@ export const TASCO_JOURNEY_POIS: JourneyPoi[] = [
   },
 ];
 
+/**
+ * Route coordinates for UC-02 CO₂ Meter journey.
+ * Represents the trip from home (Nguyen Huu Tho, D7) → VNG Campus.
+ * Index 0 = origin, index 3 = destination.
+ * Intermediate points align with the 3 stage waypoints at progress ~0.16, ~0.50, ~0.88.
+ * [longitude, latitude]
+ */
+export const UC02_ROUTE_COORDS: [number, number][] = [
+  [106.7066, 10.7510], // origin — Nguyen Huu Tho (home)
+  [106.7140, 10.7420], // waypoint 1 — ETC Charging Station I  (~progress 0.16)
+  [106.7200, 10.7360], // waypoint 2 — ETC Parking Lot         (~progress 0.50)
+  [106.7244, 10.7289], // destination — VNG Campus              (~progress 0.88+)
+];
+
 export const JOURNEY_SHORTCUTS: JourneyShortcut[] = [
   { id: "office", label: "Office", icon: "briefcase-outline", poiId: "vng-campus" },
   { id: "school", label: "School", icon: "map-outline", poiId: "tasco-sala-parking" },

@@ -1,10 +1,14 @@
 import { StatusBar } from "expo-status-bar";
+import { useVideoPlayer, VideoView } from "expo-video";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTabBar, { TabItem } from "../components/BottomTabBar";
 import { Colors } from "../theme/colors";
+
+const VIDEO_SOURCE = require("../../assets/video_xe_chay.mp4");
+const SCENE_IMAGE = require("../../assets/car.png");
 
 type MeterStage = {
   eyebrow?: string;
@@ -34,7 +38,27 @@ const TRACK_DOTS = [0.16, 0.5];
 const WAYPOINTS = [0.16, 0.5, 0.88];
 const SCENE_TOP = 228;
 const EXIT_BOTTOM = 14;
-const SCENE_IMAGE = require("../../assets/car.png");
+
+// ── Video background ───────────────────────────────────────────────────────
+
+function JourneyVideoBackground() {
+  const player = useVideoPlayer(VIDEO_SOURCE, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+
+  return (
+    <VideoView
+      player={player}
+      style={StyleSheet.absoluteFillObject}
+      contentFit="cover"
+      nativeControls={false}
+    />
+  );
+}
+
+// ── Stage helpers ──────────────────────────────────────────────────────────
 
 function getStage(progress: number): MeterStage {
   if (progress < WAYPOINTS[0]) {
@@ -84,14 +108,8 @@ function getStage(progress: number): MeterStage {
 }
 
 function getBubble(progress: number) {
-  if (progress >= 0.16 && progress < 0.26) {
-    return "+5 pts";
-  }
-
-  if (progress >= 0.5 && progress < 0.66) {
-    return "+2 pts";
-  }
-
+  if (progress >= 0.16 && progress < 0.26) return "+5 pts";
+  if (progress >= 0.5 && progress < 0.66) return "+2 pts";
   return undefined;
 }
 
@@ -104,6 +122,88 @@ function JourneyTitle({ stage }: { stage: MeterStage }) {
   );
 }
 
+// ── Congratulations overlay ────────────────────────────────────────────────
+
+function StatBox({
+  value,
+  label,
+  valueColor,
+}: {
+  value: string;
+  label: string;
+  valueColor?: string;
+}) {
+  return (
+    <View style={styles.statBox}>
+      <Text style={[styles.statValue, valueColor ? { color: valueColor } : null]}>
+        {value}
+      </Text>
+      <Text style={styles.statLabel}>{label}</Text>
+    </View>
+  );
+}
+
+function CongratsOverlay({ onDone }: { onDone: () => void }) {
+  return (
+    <View style={styles.congratsOverlay}>
+      <View style={styles.congratsBadgeWrap}>
+        <View style={styles.congratsBadgeOuter}>
+          <View style={styles.congratsBadgeInner}>
+            <MaterialCommunityIcons
+              name="check-bold"
+              size={48}
+              color={Colors.textOnPrimary}
+            />
+          </View>
+        </View>
+      </View>
+
+      <Text style={styles.congratsTitle}>Journey Complete!</Text>
+      <Text style={styles.congratsSubtitle}>
+        You've made a difference today.{"\n"}Keep up the green habit!
+      </Text>
+
+      <View style={styles.statsGrid}>
+        <StatBox value="1 kg" label="CO₂ Saved" valueColor={Colors.success} />
+        <View style={styles.statsGridDivider} />
+        <StatBox value="+7 pts" label="Green Points" valueColor={Colors.warning} />
+      </View>
+
+      <View style={styles.tripSummaryCard}>
+        <View style={styles.tripSummaryRow}>
+          <MaterialCommunityIcons
+            name="map-marker-outline"
+            size={18}
+            color={Colors.textMuted}
+          />
+          <Text style={styles.tripSummaryText}>Home → VNG Campus</Text>
+        </View>
+        <View style={styles.tripSummaryDivider} />
+        <View style={styles.tripSummaryPills}>
+          <View style={styles.tripSummaryPill}>
+            <MaterialCommunityIcons name="map-marker-distance" size={14} color={Colors.primary} />
+            <Text style={styles.tripSummaryPillText}>4.8 km</Text>
+          </View>
+          <View style={styles.tripSummaryPill}>
+            <MaterialCommunityIcons name="clock-outline" size={14} color={Colors.primary} />
+            <Text style={styles.tripSummaryPillText}>31 min</Text>
+          </View>
+          <View style={styles.tripSummaryPill}>
+            <MaterialCommunityIcons name="leaf" size={14} color={Colors.primary} />
+            <Text style={styles.tripSummaryPillText}>Grade A</Text>
+          </View>
+        </View>
+      </View>
+
+      <Pressable style={styles.congratsButton} onPress={onDone}>
+        <Text style={styles.congratsButtonText}>Back to Home</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+// ── Screen ─────────────────────────────────────────────────────────────────
+
 export default function Co2MeterScreen({ navigation }: any) {
   const [progress, setProgress] = React.useState(START_PROGRESS);
 
@@ -115,12 +215,9 @@ export default function Co2MeterScreen({ navigation }: any) {
         setProgress((current) => {
           const next = current + STEP;
           if (next >= END_PROGRESS) {
-            if (intervalId) {
-              clearInterval(intervalId);
-            }
+            if (intervalId) clearInterval(intervalId);
             return END_PROGRESS;
           }
-
           return next;
         });
       }, TICK_MS);
@@ -128,12 +225,11 @@ export default function Co2MeterScreen({ navigation }: any) {
 
     return () => {
       clearTimeout(timeoutId);
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
+      if (intervalId) clearInterval(intervalId);
     };
   }, []);
 
+  const isComplete = progress >= END_PROGRESS;
   const stage = getStage(progress);
   const pointBubble = getBubble(progress) ?? stage.pointBubble;
   const markerProgress = Math.min(Math.max(progress, START_PROGRESS), END_PROGRESS);
@@ -143,10 +239,12 @@ export default function Co2MeterScreen({ navigation }: any) {
       <StatusBar style="dark" />
 
       <View style={styles.content}>
+        {/* Looping video background — car driving forward */}
         <View style={styles.scene}>
-          <Image source={SCENE_IMAGE} style={styles.sceneImage} resizeMode="cover" />
+          <JourneyVideoBackground />
         </View>
 
+        {/* Journey progress card */}
         <View style={styles.card}>
           {stage.eyebrow ? <Text style={styles.eyebrow}>{stage.eyebrow}</Text> : null}
           <JourneyTitle stage={stage} />
@@ -220,32 +318,38 @@ export default function Co2MeterScreen({ navigation }: any) {
                   CO2 saved
                 </Text>
               </View>
-
               <Text style={styles.totalPoints}>{stage.totalPoints}</Text>
             </View>
           </View>
         </View>
 
-        <Pressable
-          style={styles.exitButton}
-          onPress={() => navigation.navigate("TascoHome")}
-        >
-          <Text style={styles.exitButtonText}>Exit Journey</Text>
-        </Pressable>
+        {/* Congratulations overlay — shown when journey finishes */}
+        {isComplete ? (
+          <CongratsOverlay onDone={() => navigation.navigate("MainTab")} />
+        ) : null}
+
+        {!isComplete ? (
+          <Pressable
+            style={styles.exitButton}
+            onPress={() => navigation.navigate("MainTab")}
+          >
+            <Text style={styles.exitButtonText}>Exit Journey</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       <BottomTabBar
         tabs={TABS}
         activeKey="journey"
         onPress={(key) => {
-          if (key === "home") {
-            navigation.navigate("TascoHome");
-          }
+          if (key === "home") navigation.navigate("MainTab");
         }}
       />
     </SafeAreaView>
   );
 }
+
+// ── Styles ─────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   safe: {
@@ -420,18 +524,11 @@ const styles = StyleSheet.create({
     color: Colors.success,
   },
   scene: {
-    position: "absolute",
-    top: SCENE_TOP,
-    left: 0,
-    right: 0,
-    bottom: EXIT_BOTTOM + 60,
-    overflow: "hidden",
-    backgroundColor: Colors.canvas,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: Colors.charcoal,
   },
-  sceneImage: {
-    width: "100%",
-    height: "100%",
-  },
+
+  // ── Exit button ──────────────────────────────────────────
   exitButton: {
     position: "absolute",
     bottom: EXIT_BOTTOM,
@@ -440,12 +537,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 34,
     paddingVertical: 16,
     borderRadius: 16,
-    backgroundColor: "#E73423",
-    shadowColor: Colors.charcoal,
-    shadowOpacity: 0,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 0,
+    backgroundColor: "red",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.7)",
+    zIndex: 3,
   },
   exitButtonText: {
     fontSize: 18,
@@ -453,5 +548,159 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: Colors.textOnPrimary,
     textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.45)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+
+  // ── Congratulations overlay ──────────────────────────────
+  congratsOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: SCENE_TOP - 40,
+    backgroundColor: Colors.surface,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    alignItems: "center",
+    shadowColor: Colors.charcoal,
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: -8 },
+    elevation: 10,
+    zIndex: 5,
+  },
+  congratsBadgeWrap: {
+    marginTop: -36,
+    marginBottom: 20,
+  },
+  congratsBadgeOuter: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: Colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 4,
+    borderColor: Colors.surface,
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.25,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
+  },
+  congratsBadgeInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.success,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  congratsTitle: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: Colors.ink,
+    textAlign: "center",
+  },
+  congratsSubtitle: {
+    marginTop: 8,
+    fontSize: 15,
+    lineHeight: 22,
+    color: Colors.textSecondary,
+    textAlign: "center",
+  },
+  statsGrid: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24,
+    width: "100%",
+    backgroundColor: Colors.surfaceMuted,
+    borderRadius: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 12,
+  },
+  statBox: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: Colors.ink,
+  },
+  statLabel: {
+    marginTop: 4,
+    fontSize: 13,
+    color: Colors.textMuted,
+    fontWeight: "600",
+  },
+  statsGridDivider: {
+    width: 1,
+    height: 44,
+    backgroundColor: Colors.border,
+  },
+  tripSummaryCard: {
+    marginTop: 16,
+    width: "100%",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  tripSummaryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  tripSummaryText: {
+    marginLeft: 8,
+    fontSize: 15,
+    fontWeight: "700",
+    color: Colors.ink,
+  },
+  tripSummaryDivider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: 12,
+  },
+  tripSummaryPills: {
+    flexDirection: "row",
+  },
+  tripSummaryPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginRight: 8,
+  },
+  tripSummaryPillText: {
+    marginLeft: 5,
+    fontSize: 12,
+    fontWeight: "700",
+    color: Colors.success,
+  },
+  congratsButton: {
+    marginTop: 20,
+    width: "100%",
+    paddingVertical: 18,
+    borderRadius: 18,
+    backgroundColor: Colors.success,
+    alignItems: "center",
+    shadowColor: Colors.primary,
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
+  },
+  congratsButtonText: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: Colors.textOnPrimary,
   },
 });

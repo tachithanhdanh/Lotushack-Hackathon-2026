@@ -1,6 +1,9 @@
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
+  Animated,
+  Dimensions,
+  PanResponder,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -32,6 +35,11 @@ const POI_COLOR: Record<JourneyPoiType, string> = {
 };
 
 const CURRENT_DOT_SIZE = 74;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const SHEET_TALL = Math.round(SCREEN_HEIGHT * 0.46);
+const SHEET_COLLAPSED = 76; // handle + search bar only
+const SNAP_VELOCITY = 0.4;
+const SNAP_DISTANCE = 80;
 const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? "";
 
 let cachedMapbox: any;
@@ -393,9 +401,40 @@ function SearchSheet({
 }: {
   onSelectPoi: (poi: JourneyPoi) => void;
 }) {
+  const animHeight = React.useRef(new Animated.Value(SHEET_TALL)).current;
+  const expandedRef = React.useRef(true);
+
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 6,
+      onPanResponderMove: (_, g) => {
+        const base = expandedRef.current ? SHEET_TALL : SHEET_COLLAPSED;
+        const next = Math.min(SHEET_TALL, Math.max(SHEET_COLLAPSED, base - g.dy));
+        animHeight.setValue(next);
+      },
+      onPanResponderRelease: (_, g) => {
+        const shouldCollapse =
+          g.vy > SNAP_VELOCITY ||
+          (expandedRef.current && g.dy > SNAP_DISTANCE);
+        // use snapTo via closure — will be bound at creation time
+        Animated.spring(animHeight, {
+          toValue: shouldCollapse ? SHEET_COLLAPSED : SHEET_TALL,
+          useNativeDriver: false,
+          bounciness: 3,
+          speed: 14,
+        }).start();
+        expandedRef.current = !shouldCollapse;
+      },
+    }),
+  ).current;
+
   return (
-    <View style={styles.sheet}>
-      <View style={styles.sheetHandle} />
+    <Animated.View style={[styles.sheet, { height: animHeight }]}>
+      {/* Drag handle — full-width touch target */}
+      <View style={styles.sheetDragArea} {...panResponder.panHandlers}>
+        <View style={styles.sheetHandle} />
+      </View>
 
       <View style={styles.searchBar}>
         <MaterialCommunityIcons name="magnify" size={32} color={Colors.textMuted} />
@@ -478,7 +517,7 @@ function SearchSheet({
           </Pressable>
         ))}
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -783,12 +822,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    minHeight: "43%",
+    overflow: "hidden",
     backgroundColor: Colors.surface,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingHorizontal: 18,
-    paddingTop: 10,
     paddingBottom: 34,
     shadowColor: Colors.charcoal,
     shadowOffset: { width: 0, height: -6 },
@@ -796,13 +834,17 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
   },
+  sheetDragArea: {
+    paddingTop: 10,
+    paddingBottom: 4,
+    alignItems: "center",
+  },
   sheetHandle: {
     width: 96,
     height: 6,
     borderRadius: 999,
     backgroundColor: Colors.border,
     alignSelf: "center",
-    marginBottom: 18,
   },
   searchBar: {
     flexDirection: "row",

@@ -20,11 +20,11 @@ const SUGGESTIONS: SuggestionItem[] = [
 
 const UTILITIES: UtilityItem[] = [
   // Demo flows (UC01/02/04)
-  { icon: "navigation-variant", label: "Journey", screen: "LiveGreenRing" },
+  { icon: "navigation-variant", label: "Journey", screen: "Journey" },
   {
     icon: "progress-check",
     label: "Live Green\nRing",
-    screen: "LiveGreenRing",
+    screen: "Journey",
   },
   { icon: "map-marker-path", label: "Tuyến\nxanh", screen: "RouteSuggestion" },
   { icon: "speedometer", label: "CO₂\nMeter", screen: "Co2Meter" },

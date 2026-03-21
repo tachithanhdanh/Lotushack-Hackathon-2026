@@ -20,9 +20,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 type RootStackParamList = {
-  TascoHome: undefined;
+  MainTab: undefined;
   VehicleControls: undefined;
-  LiveGreenRing: undefined;
+  Journey: undefined;
   Co2Meter: undefined;
   RouteSuggestion: undefined;
   Details: { from: string; count?: number } | undefined;
@@ -46,9 +46,9 @@ function AppHeader({ options, back, navigation }: any) {
 }
 
 // Screens are now organized under src/screens
-import TascoHomeScreen from "./src/screens/TascoHomeScreen";
-import VehicleControlsScreen from "./src/screens/VehicleControlsScreen";
 import MainTabScreen from "./src/screens/MainTabScreen";
+import VehicleControlsScreen from "./src/screens/VehicleControlsScreen";
+import {JourneyContent as JourneyScreen} from "./src/screens/JourneyScreen"
 import Co2MeterScreen from "./src/screens/Co2MeterScreen";
 import RouteSuggestionScreen from "./src/screens/RouteSuggestionScreen";
 import { colors } from "./src/theme/colors";
@@ -85,7 +85,7 @@ function DetailsScreen({ navigation, route }: any) {
         <Button
           title="Về trang chủ"
           color="#ef4444"
-          onPress={() => navigation.navigate("TascoHome")}
+          onPress={() => navigation.navigate("MainTab")}
         />
       </View>
     </SafeAreaView>
@@ -101,8 +101,8 @@ export default function App() {
             screenOptions={{ header: (props) => <AppHeader {...props} /> }}
           >
             <Stack.Screen
-              name="TascoHome"
-              component={TascoHomeScreen}
+              name="MainTab"
+              component={MainTabScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -111,10 +111,11 @@ export default function App() {
               options={{ title: "Điểm dịch vụ & Điều khiển" }}
             />
             <Stack.Screen
-              name="LiveGreenRing"
-              component={MainTabScreen}
+              name="Journey"
+              component={JourneyScreen}
               options={{ headerShown: false }}
             />
+
             <Stack.Screen
               name="Co2Meter"
               component={Co2MeterScreen}

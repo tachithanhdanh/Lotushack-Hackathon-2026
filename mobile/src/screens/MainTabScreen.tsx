@@ -1,46 +1,49 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme/colors';
 import BottomTabBar, { TabItem } from '../components/BottomTabBar';
+import { LiveGreenRingContent } from './LiveGreenRingScreen';
 import { JourneyContent } from './JourneyScreen';
 import { ImpactsContent } from './ImpactsScreen';
 
-type TabKey = 'Journey' | 'Impacts' | 'Rewards';
+type TabKey = 'Home' | 'Journey' | 'Impacts' | 'Rewards';
 
 const TABS: TabItem[] = [
-  { key: 'TascoHome',     icon: 'home-outline', label: 'Trang chủ' },
-  { key: 'Journey',       icon: 'navigation-variant', label: 'Hành trình' },
-  { key: 'Impacts',       icon: 'leaf',         label: 'Tác động' },
-  { key: 'Rewards',       icon: 'gift-outline', label: 'Phần thưởng' },
+  { key: 'Home',    icon: 'home-outline',      label: 'Home' },
+  { key: 'Journey', icon: 'navigation-variant', label: 'Journey' },
+  { key: 'Impacts', icon: 'leaf',               label: 'Impacts' },
+  { key: 'Rewards', icon: 'gift-outline',        label: 'Rewards' },
 ];
 
+function RewardsPlaceholder() {
+  return (
+    <View style={styles.placeholder}>
+      <Text style={styles.placeholderText}>Rewards coming soon</Text>
+    </View>
+  );
+}
+
 /**
- * Shell screen that hosts all bottom-tab content in a single component.
- *
- * Both tab views are kept mounted at all times. The active one is brought
- * to the front via zIndex — no navigation.navigate() calls, so there are
- * zero re-renders or slide animations when switching tabs.
- *
- * "Trang chủ" is the only tab that triggers real navigation (back to the
- * TascoHome stack screen).
+ * Shell screen that hosts all bottom-tab content.
+ * All tab panes are kept mounted; the active one is brought to front via
+ * zIndex — no navigation.navigate() calls on tab switch, zero slide animations.
  */
 export default function MainTabScreen({ navigation }: any) {
-  const [activeTab, setActiveTab] = useState<TabKey>('Journey');
-
-  const handleTabPress = (key: string) => {
-    if (key === 'TascoHome') {
-      navigation.navigate('TascoHome');
-      return;
-    }
-    if (key === 'Rewards') return; // placeholder — not yet implemented
-    setActiveTab(key as TabKey);
-  };
+  const [activeTab, setActiveTab] = useState<TabKey>('Home');
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.content}>
-        {/* Hành trình tab */}
+        {/* Home — Live Green Ring */}
+        <View
+          style={[styles.tabPane, { zIndex: activeTab === 'Home' ? 1 : 0 }]}
+          pointerEvents={activeTab === 'Home' ? 'auto' : 'none'}
+        >
+          <LiveGreenRingContent />
+        </View>
+
+        {/* Journey */}
         <View
           style={[styles.tabPane, { zIndex: activeTab === 'Journey' ? 1 : 0 }]}
           pointerEvents={activeTab === 'Journey' ? 'auto' : 'none'}
@@ -48,16 +51,28 @@ export default function MainTabScreen({ navigation }: any) {
           <JourneyContent navigation={navigation} />
         </View>
 
-        {/* Tác động tab */}
+        {/* Impacts */}
         <View
           style={[styles.tabPane, { zIndex: activeTab === 'Impacts' ? 1 : 0 }]}
           pointerEvents={activeTab === 'Impacts' ? 'auto' : 'none'}
         >
           <ImpactsContent />
         </View>
+
+        {/* Rewards */}
+        <View
+          style={[styles.tabPane, { zIndex: activeTab === 'Rewards' ? 1 : 0 }]}
+          pointerEvents={activeTab === 'Rewards' ? 'auto' : 'none'}
+        >
+          <RewardsPlaceholder />
+        </View>
       </View>
 
-      <BottomTabBar tabs={TABS} activeKey={activeTab} onPress={handleTabPress} />
+      <BottomTabBar
+        tabs={TABS}
+        activeKey={activeTab}
+        onPress={(key) => setActiveTab(key as TabKey)}
+      />
     </SafeAreaView>
   );
 }
@@ -68,5 +83,14 @@ const styles = StyleSheet.create({
   tabPane: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Colors.background,
+  },
+  placeholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderText: {
+    fontSize: 16,
+    color: Colors.textMuted,
   },
 });

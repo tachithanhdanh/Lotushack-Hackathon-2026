@@ -30,7 +30,8 @@
     },
     "plugins": [
       "expo-font",
-      "@rnmapbox/maps"
+      "@rnmapbox/maps",
+      "expo-video"
     ]
   }
 }
