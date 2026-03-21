@@ -6,6 +6,7 @@ import BottomTabBar, { TabItem } from '../components/BottomTabBar';
 import { LiveGreenRingContent } from './LiveGreenRingScreen';
 import { JourneyContent } from './JourneyScreen';
 import { ImpactsContent } from './ImpactsScreen';
+import { RewardsContent } from './RewardsScreen';
 
 type TabKey = 'Home' | 'Journey' | 'Impacts' | 'Rewards';
 
@@ -59,12 +60,11 @@ export default function MainTabScreen({ navigation }: any) {
           <ImpactsContent />
         </View>
 
-        {/* Rewards */}
         <View
           style={[styles.tabPane, { zIndex: activeTab === 'Rewards' ? 1 : 0 }]}
           pointerEvents={activeTab === 'Rewards' ? 'auto' : 'none'}
         >
-          <RewardsPlaceholder />
+          <RewardsContent />
         </View>
       </View>
 
