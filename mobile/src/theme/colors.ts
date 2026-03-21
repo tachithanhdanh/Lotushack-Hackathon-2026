@@ -36,12 +36,30 @@ export const Colors = {
   background: "#FFFFFF",
   /** Card and elevated surface background */
   surface: "#FFFFFF",
+  /** Soft canvas background for immersive screens */
+  canvas: "#F4F4EF",
   /** Progress bar track / subtle list separators */
   card: "#F2F2F2",
   /** Icon container background in service grids */
   surfaceLight: "#F2F2F2",
+  /** Slightly darker elevated card surface */
+  surfaceMuted: "#F7F7F5",
   /** Subtle divider and border color */
   border: "#E0E0E0",
+  /** Neutral track color used in journey meters */
+  track: "#D2D6DB",
+  /** Soft blue for route guidance visuals */
+  routeBlue: "#8BCBFF",
+  /** Light blue halo for route guidance visuals */
+  routeBlueLight: "#DDF4FF",
+  /** Dark neutral for overlays and badges */
+  ink: "#111827",
+  /** Cool gray for road stripes and shadows */
+  shadowSoft: "#D7DDE4",
+  /** Dark glass tone for vehicle windows */
+  steel: "#3F454C",
+  /** Near-black tone for wheels and deep shadows */
+  charcoal: "#1C1F24",
 
   // ── Feedback ───────────────────────────────────────────
   success: "#00A651",

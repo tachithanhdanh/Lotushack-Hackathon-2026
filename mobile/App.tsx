@@ -118,7 +118,7 @@ export default function App() {
             <Stack.Screen
               name="Co2Meter"
               component={Co2MeterScreen}
-              options={{ title: "CO₂ Meter" }}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="RouteSuggestion"
