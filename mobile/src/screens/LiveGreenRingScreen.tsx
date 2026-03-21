@@ -13,8 +13,7 @@ import { useLiveGreenData } from "../hooks/useLiveGreenData";
 import { MOCK_CAR_360_IMAGES } from "../constants/mock_live_green";
 import Car360Viewer from "../components/Car360Viewer";
 import CarInfoCard from "../components/CarInfoCard";
-import DailyMissionMonitor from "../components/DailyMissionMonitor";
-import MissionProgressSection from "../components/MissionProgressSection";
+import GreenMissionBoard from "../components/GreenMissionBoard";
 import BottomTabBar, { TabItem } from "../components/BottomTabBar";
 
 const SCREEN_W = Dimensions.get("window").width;
@@ -27,7 +26,7 @@ const TABS: TabItem[] = [
 ];
 
 export default function LiveGreenRingScreen() {
-  const { data, loading, refresh } = useLiveGreenData();
+  const { data, loading, refresh, toggleMission } = useLiveGreenData();
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
@@ -53,14 +52,13 @@ export default function LiveGreenRingScreen() {
           />
         </View>
 
-        {/* ── Daily mission stat cards ─────────────────────── */}
-        <DailyMissionMonitor stats={data.stats} />
-
-        {/* ── Progress ring + mission list ─────────────────── */}
-        <MissionProgressSection
+        {/* ── Mission board: stat cards + ring + checklist ─── */}
+        <GreenMissionBoard
+          stats={data.stats}
           missions={data.missions}
           loading={loading}
           onRefresh={refresh}
+          onToggleMission={toggleMission}
         />
 
         <View style={styles.bottomPad} />

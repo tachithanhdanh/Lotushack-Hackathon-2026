@@ -59,5 +59,25 @@ export function useLiveGreenData() {
     setLoading(false);
   }, []);
 
-  return { data, loading, refresh };
+  /** Toggle a mission done/undone and recompute derived stats immediately. */
+  const toggleMission = useCallback((id: string) => {
+    setData((prev) => {
+      const missions = prev.missions.map((m) =>
+        m.id === id ? { ...m, done: !m.done } : m
+      );
+      const doneMissions = missions.filter((m) => m.done);
+      return {
+        ...prev,
+        missions,
+        stats: {
+          ...prev.stats,
+          missionProgress:
+            missions.length > 0 ? doneMissions.length / missions.length : 0,
+          greenPoints: doneMissions.reduce((sum, m) => sum + m.pts, 0),
+        },
+      };
+    });
+  }, []);
+
+  return { data, loading, refresh, toggleMission };
 }
