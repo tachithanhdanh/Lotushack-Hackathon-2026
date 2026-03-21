@@ -5,10 +5,11 @@ import {
   getChartData,
   getAllAchievements,
   getCommunityStats,
+  getLeaderboard,
 } from '../data/service';
-import type { Achievement, CommunityStats } from '../data/types';
+import type { Achievement, CommunityStats, LeaderboardEntry } from '../data/types';
 
-export type Period = 'week' | 'month' | 'year';
+export type Period = 'day' | 'week' | 'month';
 
 export interface ImpactSummary {
   co2Kg: number;
@@ -23,13 +24,14 @@ export interface DailyBarData {
   isToday: boolean;
 }
 
-export type { Achievement, CommunityStats };
+export type { Achievement, CommunityStats, LeaderboardEntry };
 
 interface ImpactsState {
   summary: ImpactSummary;
   chartData: DailyBarData[];
   achievements: Achievement[];
   community: CommunityStats;
+  leaderboard: LeaderboardEntry[];
 }
 
 const EMPTY_SUMMARY: ImpactSummary = {
@@ -56,17 +58,19 @@ export function useImpactsData() {
   const load = useCallback(async (p: Period) => {
     setLoading(true);
     await ensureSeeded();
-    const [summary, chartData, achievements, community] = await Promise.all([
+    const [summary, chartData, achievements, community, leaderboard] = await Promise.all([
       getImpactSummary(p),
       getChartData(p),
       getAllAchievements(),
       getCommunityStats(),
+      getLeaderboard(),
     ]);
     setState({
       summary,
       chartData,
       achievements,
       community: community ?? EMPTY_COMMUNITY,
+      leaderboard,
     });
     setLoading(false);
   }, []);
@@ -78,6 +82,7 @@ export function useImpactsData() {
     chartData: [],
     achievements: [],
     community: EMPTY_COMMUNITY,
+    leaderboard: [],
   };
 
   const s = state ?? fallback;
@@ -90,5 +95,6 @@ export function useImpactsData() {
     chartData: s.chartData,
     achievements: s.achievements,
     community: s.community,
+    leaderboard: s.leaderboard,
   };
 }

@@ -7,6 +7,7 @@
  */
 
 import type {
+  LeaderboardEntry,
   User,
   DailyRing,
   Trip,
@@ -260,6 +261,17 @@ export const SEED_ACHIEVEMENTS: Achievement[] = [
     progress: 0.15,
     progressLabel: '3 / 20 chuyến',
   },
+];
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+export const SEED_LEADERBOARD: LeaderboardEntry[] = [
+  { id: 'LB001', rank: 1, name: 'Ngoc Tran',    avatarColor: '#A8D5B5', co2Kg: 12.5, badgeCount: 12 },
+  { id: 'LB002', rank: 2, name: 'Minh Le',      avatarColor: '#B0BEC5', co2Kg: 10.1, badgeCount: 10 },
+  { id: 'LB003', rank: 3, name: 'Thoai Tang',   avatarColor: '#FFCCBC', co2Kg: 9.0,  badgeCount: 8  },
+  { id: 'LB004', rank: 4, name: 'Thuan Nguyen', avatarColor: '#C8E6C9', co2Kg: 8.9,  badgeCount: 7  },
+  { id: 'LB005', rank: 5, name: 'Danh Ta',      avatarColor: '#D1C4E9', co2Kg: 8.6,  badgeCount: 6  },
+  { id: 'LB006', rank: 6, name: 'Sam Tran',     avatarColor: '#FFE0B2', co2Kg: 8.2,  badgeCount: 5  },
 ];
 
 // ── Community stats ───────────────────────────────────────────────────────────

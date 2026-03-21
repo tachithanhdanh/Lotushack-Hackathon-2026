@@ -9,7 +9,7 @@
 export type VehicleType = 'motorbike' | 'car' | 'ev';
 export type VehicleStatus = 'parking' | 'driving' | 'charging';
 export type EcoGrade = 'A' | 'B' | 'C' | 'D' | 'F';
-export type Period = 'week' | 'month' | 'year';
+export type Period = 'day' | 'week' | 'month';
 export type TripStatus = 'active' | 'completed' | 'cancelled';
 export type PointsSource = 'ring_task' | 'streak_bonus' | 'trip' | 'referral' | 'manual';
 export type RingTaskType =
@@ -139,6 +139,18 @@ export interface CommunityStats {
   lastUpdated: string;
 }
 
+// ── Leaderboard (UC-03 community ranking) ────────────────────────────────────
+
+export interface LeaderboardEntry {
+  id: string;
+  rank: number;
+  name: string;
+  /** Hex background color — used as avatar fill */
+  avatarColor: string;
+  co2Kg: number;
+  badgeCount: number;
+}
+
 // ── Smart route option (UC-04) ────────────────────────────────────────────────
 
 export interface RouteOption {
@@ -161,6 +173,7 @@ export const COLLECTIONS = {
   TRIPS: 'trips',
   POINTS_LEDGER: 'points_ledger',
   ACHIEVEMENTS: 'achievements',
+  LEADERBOARD: 'leaderboard',
 } as const;
 
 export const SINGLETONS = {

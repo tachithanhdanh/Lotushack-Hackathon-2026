@@ -17,6 +17,7 @@ import {
   type PointsEntry,
   type Achievement,
   type CommunityStats,
+  type LeaderboardEntry,
   type EcoGrade,
   type VehicleType,
 } from './types';
@@ -28,6 +29,7 @@ import {
   SEED_POINTS_LEDGER,
   SEED_ACHIEVEMENTS,
   SEED_COMMUNITY_STATS,
+  SEED_LEADERBOARD,
 } from './seed';
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
@@ -42,6 +44,7 @@ export async function ensureSeeded(): Promise<void> {
     store.seed(COLLECTIONS.TRIPS, SEED_TRIPS),
     store.seed(COLLECTIONS.POINTS_LEDGER, SEED_POINTS_LEDGER),
     store.seed(COLLECTIONS.ACHIEVEMENTS, SEED_ACHIEVEMENTS),
+    store.seed(COLLECTIONS.LEADERBOARD, SEED_LEADERBOARD),
     store.setSingleton(SINGLETONS.COMMUNITY_STATS, SEED_COMMUNITY_STATS),
     store.setSingleton(SINGLETONS.CURRENT_USER_ID, SEED_CURRENT_USER_ID),
   ]);
@@ -190,7 +193,7 @@ export async function dropAllTrips(): Promise<void> {
 }
 
 /** Derive impact summary stats for a period (used by ImpactsScreen). */
-export async function getImpactSummary(period: 'week' | 'month' | 'year') {
+export async function getImpactSummary(period: 'day' | 'week' | 'month') {
   const all = await getAllTrips();
   const cutoff = periodCutoff(period);
   const inPeriod = all.filter((t) => t.date >= cutoff && t.status === 'completed');
@@ -205,11 +208,17 @@ export async function getImpactSummary(period: 'week' | 'month' | 'year') {
 }
 
 /** Build bar chart data for a period. */
-export async function getChartData(period: 'week' | 'month' | 'year') {
+export async function getChartData(period: 'day' | 'week' | 'month') {
   const all = await getAllTrips();
   const cutoff = periodCutoff(period);
   const inPeriod = all.filter((t) => t.date >= cutoff && t.status === 'completed');
   const today = todayKey();
+
+  if (period === 'day') {
+    // 24 one-hour buckets — simplified as a single bar for today
+    const co2Kg = inPeriod.reduce((s, t) => s + t.co2EmittedKg, 0);
+    return [{ day: 'Today', co2Kg: parseFloat(co2Kg.toFixed(2)), isToday: true }];
+  }
 
   if (period === 'week') {
     const days = Array.from({ length: 7 }, (_, i) => {
@@ -218,7 +227,7 @@ export async function getChartData(period: 'week' | 'month' | 'year') {
       return d.toISOString().slice(0, 10);
     });
     return days.map((date, i) => {
-      const label = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'][i];
+      const label = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i];
       const co2Kg = inPeriod
         .filter((t) => t.date === date)
         .reduce((s, t) => s + t.co2EmittedKg, 0);
@@ -226,32 +235,18 @@ export async function getChartData(period: 'week' | 'month' | 'year') {
     });
   }
 
-  if (period === 'month') {
-    const weeks = [1, 2, 3, 4];
-    return weeks.map((w) => {
-      const weekTrips = inPeriod.filter((t) => {
-        const day = new Date(t.date).getDate();
-        return Math.ceil(day / 7) === w;
-      });
-      const co2Kg = weekTrips.reduce((s, t) => s + t.co2EmittedKg, 0);
-      return {
-        day: `T${w}`,
-        co2Kg: parseFloat(co2Kg.toFixed(2)),
-        isToday: w === Math.ceil(new Date().getDate() / 7),
-      };
+  // month — group by week
+  const weeks = [1, 2, 3, 4];
+  return weeks.map((w) => {
+    const weekTrips = inPeriod.filter((t) => {
+      const day = new Date(t.date).getDate();
+      return Math.ceil(day / 7) === w;
     });
-  }
-
-  // year — group by month
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  return months.map((m) => {
-    const monthStr = String(m).padStart(2, '0');
-    const monthTrips = inPeriod.filter((t) => t.date.slice(5, 7) === monthStr);
-    const co2Kg = monthTrips.reduce((s, t) => s + t.co2EmittedKg, 0);
+    const co2Kg = weekTrips.reduce((s, t) => s + t.co2EmittedKg, 0);
     return {
-      day: `T${m}`,
+      day: `W${w}`,
       co2Kg: parseFloat(co2Kg.toFixed(2)),
-      isToday: m === new Date().getMonth() + 1,
+      isToday: w === Math.ceil(new Date().getDate() / 7),
     };
   });
 }
@@ -300,6 +295,24 @@ export async function dropAllAchievements(): Promise<void> {
   return store.dropAll(COLLECTIONS.ACHIEVEMENTS);
 }
 
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+  const entries = await store.getAll<LeaderboardEntry>(COLLECTIONS.LEADERBOARD);
+  return entries.sort((a, b) => a.rank - b.rank);
+}
+
+export async function updateLeaderboardEntry(
+  id: string,
+  patch: Partial<Omit<LeaderboardEntry, 'id'>>
+): Promise<LeaderboardEntry> {
+  return store.update<LeaderboardEntry>(COLLECTIONS.LEADERBOARD, id, patch);
+}
+
+export async function dropAllLeaderboard(): Promise<void> {
+  return store.dropAll(COLLECTIONS.LEADERBOARD);
+}
+
 // ── Community Stats ───────────────────────────────────────────────────────────
 
 export async function getCommunityStats(): Promise<CommunityStats | null> {
@@ -317,20 +330,18 @@ function todayKey(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function periodCutoff(period: 'week' | 'month' | 'year'): string {
+function periodCutoff(period: 'day' | 'week' | 'month'): string {
   const d = new Date();
-  if (period === 'week') d.setDate(d.getDate() - 6);
-  else if (period === 'month') d.setDate(1);
-  else d.setMonth(0, 1);
+  if (period === 'day') { /* today only — no shift needed */ }
+  else if (period === 'week') d.setDate(d.getDate() - 6);
+  else d.setDate(1);
   return d.toISOString().slice(0, 10);
 }
 
-function periodDays(period: 'week' | 'month' | 'year'): number {
+function periodDays(period: 'day' | 'week' | 'month'): number {
+  if (period === 'day') return 1;
   if (period === 'week') return 7;
-  if (period === 'month') return new Date().getDate();
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  return Math.floor((now.getTime() - start.getTime()) / 86_400_000);
+  return new Date().getDate();
 }
 
 async function _awardPoints(opts: {
