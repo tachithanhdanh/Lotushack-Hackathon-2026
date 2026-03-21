@@ -7,71 +7,60 @@ import {
   Text,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../theme/colors";
 import { useLiveGreenData } from "../hooks/useLiveGreenData";
 import { MOCK_CAR_360_IMAGES } from "../constants/mock_live_green";
 import Car360Viewer from "../components/Car360Viewer";
 import CarInfoCard from "../components/CarInfoCard";
 import GreenMissionBoard from "../components/GreenMissionBoard";
-import BottomTabBar, { TabItem } from "../components/BottomTabBar";
 
 const SCREEN_W = Dimensions.get("window").width;
 
-const TABS: TabItem[] = [
-  { key: "home", icon: "home", label: "Home" },
-  { key: "journey", icon: "navigation-variant", label: "Journey" },
-  { key: "impacts", icon: "leaf", label: "Impacts" },
-  { key: "rewards", icon: "gift", label: "Rewards" },
-];
-
-export default function LiveGreenRingScreen() {
+/**
+ * Content-only component — no SafeAreaView, no BottomTabBar.
+ * Rendered inside MainTabScreen which owns the shell and tab bar.
+ */
+export function LiveGreenRingContent() {
   const { data, loading, refresh, toggleMission } = useLiveGreenData();
 
   return (
-    <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScrollView
-        style={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refresh} />
-        }
-      >
-        {/* ── Header ─────────────────────────────────────── */}
-        <View style={styles.header}>
-          <Text style={styles.greeting}>Good morning, Ngoc!</Text>
-          <CarInfoCard vehicle={data.vehicle} />
-        </View>
+    <ScrollView
+      style={styles.scroll}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refresh} />
+      }
+    >
+      {/* ── Header ─────────────────────────────────────── */}
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Good morning, Ngoc!</Text>
+        <CarInfoCard vehicle={data.vehicle} />
+      </View>
 
-        {/* ── Hero: 360° car viewer ────────────────────────── */}
-        <View style={styles.hero}>
-          <Car360Viewer
-            images={MOCK_CAR_360_IMAGES}
-            width={SCREEN_W - 40}
-            height={200}
-          />
-        </View>
-
-        {/* ── Mission board: stat cards + ring + checklist ─── */}
-        <GreenMissionBoard
-          stats={data.stats}
-          missions={data.missions}
-          loading={loading}
-          onRefresh={refresh}
-          onToggleMission={toggleMission}
+      {/* ── Hero: 360° car viewer ────────────────────────── */}
+      <View style={styles.hero}>
+        <Car360Viewer
+          images={MOCK_CAR_360_IMAGES}
+          width={SCREEN_W - 40}
+          height={200}
         />
+      </View>
 
-        <View style={styles.bottomPad} />
-      </ScrollView>
+      {/* ── Mission board: stat cards + ring + checklist ─── */}
+      <GreenMissionBoard
+        stats={data.stats}
+        missions={data.missions}
+        loading={loading}
+        onRefresh={refresh}
+        onToggleMission={toggleMission}
+      />
 
-      {/* ── Bottom tab bar ───────────────────────────────── */}
-      <BottomTabBar tabs={TABS} activeKey="home" onPress={() => {}} />
-    </SafeAreaView>
+      <View style={styles.bottomPad} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
   scroll: { flex: 1 },
   header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },
   greeting: {

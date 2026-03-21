@@ -48,7 +48,7 @@ function AppHeader({ options, back, navigation }: any) {
 // Screens are now organized under src/screens
 import TascoHomeScreen from "./src/screens/TascoHomeScreen";
 import VehicleControlsScreen from "./src/screens/VehicleControlsScreen";
-import LiveGreenRingScreen from "./src/screens/LiveGreenRingScreen";
+import MainTabScreen from "./src/screens/MainTabScreen";
 import Co2MeterScreen from "./src/screens/Co2MeterScreen";
 import RouteSuggestionScreen from "./src/screens/RouteSuggestionScreen";
 import { colors } from "./src/theme/colors";
@@ -112,8 +112,8 @@ export default function App() {
             />
             <Stack.Screen
               name="LiveGreenRing"
-              component={LiveGreenRingScreen}
-              options={{ title: "Live Green Ring" }}
+              component={MainTabScreen}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Co2Meter"
