@@ -5,6 +5,7 @@
 - Priority: P1
 - Actors: Tasco ESG Officer (primary); Tasco Executive (viewer)
 - Source: FigJam table node 138:1159
+ - Source of truth: see use_case_spec_green_points.docx.pdf (this repo)
 
 ## Trigger
 - ESG Officer logs in; exports GHG Protocol–compatible credentials
@@ -45,3 +46,16 @@
 - BR-04: Dashboard data refresh rate: every 15 minutes (near real-time)
 - BR-05: Exported reports must include limitation note about Green Points incentives vs certified carbon credits
 - BR-06: Data available for export: up to 3 years historical rolling window
+
+## Entrypoint
+- Đối tượng: Nhân sự ESG của Tasco (web).
+- URL: dashboard.greenpoints.vn (SSO). Liên kết từ app mobile: mục “Tác động cộng đồng” → mở web (in-app browser) ở chế độ chỉ xem.
+
+## Luồng người dùng (Web)
+1. Đăng nhập SSO → vào trang Tổng quan: thẻ KPI + biểu đồ tổng hợp.
+2. Chọn kỳ báo cáo → xem phân rã theo nguồn (ETC/EV/Off-peak) và phân bố loại phương tiện.
+3. Drill-down ETC → xem danh sách chuyến ẩn danh.
+4. Xuất báo cáo (Scope 3 / Nội bộ / CSV) → tải file → hệ thống log sự kiện xuất.
+
+## Dòng dữ liệu
+- Mobile → API tập trung (ẩn danh hoá) → Kho lưu trữ → Dashboard (15 phút/lần).

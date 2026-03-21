@@ -5,6 +5,7 @@
 - Priority: P1
 - Actors: Driver xe xăng; Driver xe điện (EV)
 - Source: FigJam table node 138:1159
+ - Source of truth: see use_case_spec_green_points.docx.pdf (this repo)
 
 ## Trigger
 - User opens “Search route” screen OR opens app with pending A→B route and taps “Suggest Route”
@@ -44,3 +45,14 @@
 - BR-04: VETC gate locations sourced from Tasco VETC API (authoritative); updated weekly
 - BR-05: Idle time per manual toll assumed = 3.2 minutes; configurable per gate
 - BR-06: Route re-calculation triggered if: user deviates > 500m OR journey paused > 10 minutes
+
+## Entrypoint
+- Từ Home: ô tìm kiếm “Tìm tuyến đường xanh”.
+- Từ “Điểm dịch vụ/Điều khiển”: nút “Đến [điểm dịch vụ/xưởng]” mở gợi ý tuyến.
+
+## Luồng người dùng (Mobile)
+1. Nhập A và B → Nhấn “Tìm tuyến đường xanh”.
+2. Nhận 2–3 tuyến (Nhanh nhất / Cân bằng / Xanh nhất) với CO₂, thời gian, chi phí, điểm GP tiềm năng.
+3. Chọn tuyến → lưu làm kế hoạch hành trình.
+4. Nhấn “Bắt đầu hành trình” → chuyển sang UC02 (CO₂ Meter).
+5. Lệch tuyến > 500m → đề xuất quay lại/đi tuyến thay thế.
