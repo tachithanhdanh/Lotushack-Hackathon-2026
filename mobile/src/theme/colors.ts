@@ -52,8 +52,16 @@ export const Colors = {
   routeBlue: "#8BCBFF",
   /** Light blue halo for route guidance visuals */
   routeBlueLight: "#DDF4FF",
+  /** Green used for live location markers on maps */
+  mapGreen: "#42C98B",
   /** Dark neutral for overlays and badges */
   ink: "#111827",
+  /** Strong white glass surface for map overlays */
+  glassStrong: "rgba(255,255,255,0.94)",
+  /** Soft white glass surface for map overlays */
+  glassSoft: "rgba(255,255,255,0.92)",
+  /** Mint halo used behind current position on maps */
+  haloMint: "rgba(237,247,237,0.62)",
   /** Cool gray for road stripes and shadows */
   shadowSoft: "#D7DDE4",
   /** Dark glass tone for vehicle windows */
