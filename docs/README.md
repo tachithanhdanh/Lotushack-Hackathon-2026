@@ -18,3 +18,7 @@ Conventions
 
 - Giao diện: Light mode (không hỗ trợ dark mode trong MVP).
 - Ngôn ngữ: Tiếng Việt toàn bộ app và tài liệu.
+
+Source of truth
+
+- PDF chi tiết use case: use-cases/use_case_spec_green_points.docx.pdf

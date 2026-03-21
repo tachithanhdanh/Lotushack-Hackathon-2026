@@ -7,6 +7,8 @@
 - Actors: Driver xe xăng; Driver xe điện (EV)
 - Source: FigJam table node 138:1159
 
+Source of truth: see use_case_spec_green_points.docx.pdf (this repo)
+
 ## Trigger
 - User taps “Start Journey” OR app auto-detects motion > 20 km/h for 2 minutes
 
@@ -46,3 +48,19 @@
 - BR-03: CO₂ saved = [(baseline_idle_time × 0.03 kgCO₂/min) + (ETC_passes × avg_idle_avoided_min × 0.03)]
 - BR-04: Eco-grade scale: A (< 0.05 kg/km) | B (0.05–0.10) | C (0.10–0.15) | D (0.15–0.20) | F (> 0.20)
 - BR-05: Data retention: raw GPS deleted after 30 days; aggregated trip metrics kept indefinitely
+
+## Entrypoint
+- Từ Home: CTA “Bắt đầu hành trình”.
+- Từ UC04: Sau khi chọn tuyến, nhấn “Bắt đầu hành trình”.
+- Tự động: App phát hiện vận tốc > 20 km/h trong 2 phút (nếu user bật tự khởi động).
+
+## Luồng người dùng (Mobile)
+1. Chọn tuyến (từ gợi ý UC04 hoặc A→B đã lưu) → vào màn “CO₂ Meter”.
+2. Nhấn “Bắt đầu” → ghi GPS/Speed mỗi 1s, load hệ số phát thải theo loại xe.
+3. Màn hình hiển thị: tốc độ hiện tại, CO₂/km, tổng CO₂, điểm Eco.
+4. Khi qua ETC → hiển thị “− CO₂ saved” màu xanh; khi kẹt xe → cảnh báo màu hổ phách và gợi ý.
+5. Đến đích (speed < 5 km/h 60s) → tự kết thúc → màn tổng kết + nút Lưu/Chia sẻ.
+6. Cập nhật dữ liệu cho UC01 và Dashboard B2B (ẩn danh).
+
+## Luồng nền
+- Theo dõi GPS foreground/background, đồng bộ trip summary khi có mạng.

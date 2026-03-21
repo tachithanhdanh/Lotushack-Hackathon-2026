@@ -7,6 +7,8 @@
 - Actors: Driver xe xăng; Driver xe điện; Người đi bộ; Người đi bus
 - Source: FigJam table node 138:1159
 
+Source of truth: see use_case_spec_green_points.docx.pdf (this repo)
+
 ## Trigger
 - User opens app each morning OR receives morning push notification at 6:30 AM
 
@@ -50,3 +52,22 @@
 ## Notes
 - Display placement: Home screen widget + dedicated Impact screen
 - Dependencies: VETC transactions API, Parking/payment events, GPS background service, Push service
+
+## Entrypoint
+- Trang: Tasco VETC Home → thẻ nhỏ “Live Green Ring” hoặc nút trong “Điểm dịch vụ”.
+- Deep link: push notification buổi sáng 6:30 → mở trực tiếp màn “Live Green Ring”.
+
+## Luồng người dùng (Mobile)
+1. Mở app → thấy thẻ ring ở Home (hoặc nhận push buổi sáng) → vào “Live Green Ring”.
+2. Nhập nhanh lộ trình hôm nay (voice/text) nếu khác mặc định A→B.
+3. Trong ngày, các sự kiện được tự động validate:
+	- Qua trạm ETC (webhook 3s) → +33%.
+	- Khởi hành trước 7:30 (GPS) → +33%.
+	- Sự kiện gửi xe/thanh toán → +34%.
+4. Đạt 100% → hiển thị chúc mừng, cộng điểm base + bonus streak.
+5. Ghi log ẩn danh lên Dashboard B2B.
+
+## Luồng nền (Background services)
+- Location (foreground/background) để tính timestamp/khởi hành.
+- Webhook VETC + payment để xác nhận nhiệm vụ.
+- Push service cho nhắc việc và tổng kết ngày.
