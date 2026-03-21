@@ -23,6 +23,8 @@ type RootStackParamList = {
   TascoHome: undefined;
   VehicleControls: undefined;
   LiveGreenRing: undefined;
+  Co2Meter: undefined;
+  RouteSuggestion: undefined;
   Details: { from: string; count?: number } | undefined;
 };
 
@@ -47,6 +49,21 @@ function AppHeader({ options, back, navigation }: any) {
 import TascoHomeScreen from "./src/screens/TascoHomeScreen";
 import VehicleControlsScreen from "./src/screens/VehicleControlsScreen";
 import LiveGreenRingScreen from "./src/screens/LiveGreenRingScreen";
+import Co2MeterScreen from "./src/screens/Co2MeterScreen";
+import RouteSuggestionScreen from "./src/screens/RouteSuggestionScreen";
+import { colors } from "./src/theme/colors";
+
+const appTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: colors.primary,
+    secondary: colors.secondary,
+    surface: colors.surface,
+    background: colors.background,
+    outline: colors.border,
+  },
+} as typeof MD3LightTheme;
 
 function DetailsScreen({ navigation, route }: any) {
   const { from = "Không rõ", count } = route.params || {};
@@ -77,7 +94,7 @@ function DetailsScreen({ navigation, route }: any) {
 
 export default function App() {
   return (
-    <PaperProvider theme={MD3LightTheme}>
+    <PaperProvider theme={appTheme}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator
@@ -97,6 +114,16 @@ export default function App() {
               name="LiveGreenRing"
               component={LiveGreenRingScreen}
               options={{ title: "Live Green Ring" }}
+            />
+            <Stack.Screen
+              name="Co2Meter"
+              component={Co2MeterScreen}
+              options={{ title: "CO₂ Meter" }}
+            />
+            <Stack.Screen
+              name="RouteSuggestion"
+              component={RouteSuggestionScreen}
+              options={{ title: "Tuyến đường xanh" }}
             />
             <Stack.Screen name="Details" component={DetailsScreen} />
           </Stack.Navigator>

@@ -19,12 +19,21 @@ const SUGGESTIONS: SuggestionItem[] = [
 ];
 
 const UTILITIES: UtilityItem[] = [
+  // Demo flows (UC01/02/04)
+  {
+    icon: "progress-check",
+    label: "Live Green\nRing",
+    screen: "LiveGreenRing",
+  },
+  { icon: "map-marker-path", label: "Tuyến\nxanh", screen: "RouteSuggestion" },
+  { icon: "speedometer", label: "CO₂\nMeter", screen: "Co2Meter" },
+  // Existing utilities
   { icon: "credit-card", label: "Tài khoản\ngiao thông" },
   { icon: "ticket-confirmation", label: "Mua vé\ntháng quý" },
   { icon: "history", label: "Lịch sử\ngiao dịch" },
   { icon: "car-cog", label: "Quản lý xe" },
   { icon: "map-marker", label: "Điểm dịch vụ", screen: "VehicleControls" },
-  { icon: "security", label: "Bảo hiểm" },
+  { icon: "shield-check", label: "Bảo hiểm" },
   { icon: "car-arrow-right", label: "Nhận xe từ" },
   { icon: "view-grid", label: "Tất cả" },
 ];
