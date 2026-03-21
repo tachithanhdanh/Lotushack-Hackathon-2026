@@ -5,14 +5,15 @@ import { Colors } from '../theme/colors';
 import BottomTabBar, { TabItem } from '../components/BottomTabBar';
 import { JourneyContent } from './JourneyScreen';
 import { ImpactsContent } from './ImpactsScreen';
+import { RewardsContent } from './RewardsScreen';
 
 type TabKey = 'Journey' | 'Impacts' | 'Rewards';
 
 const TABS: TabItem[] = [
-  { key: 'TascoHome',     icon: 'home-outline', label: 'Trang chủ' },
-  { key: 'Journey',       icon: 'navigation-variant', label: 'Hành trình' },
-  { key: 'Impacts',       icon: 'leaf',         label: 'Tác động' },
-  { key: 'Rewards',       icon: 'gift-outline', label: 'Phần thưởng' },
+  { key: 'TascoHome',     icon: 'home-outline', label: 'Home' },
+  { key: 'Journey',       icon: 'navigation-variant', label: 'Journey' },
+  { key: 'Impacts',       icon: 'leaf',         label: 'Impacts' },
+  { key: 'Rewards',       icon: 'gift-outline', label: 'Rewards' },
 ];
 
 /**
@@ -33,7 +34,6 @@ export default function MainTabScreen({ navigation }: any) {
       navigation.navigate('TascoHome');
       return;
     }
-    if (key === 'Rewards') return; // placeholder — not yet implemented
     setActiveTab(key as TabKey);
   };
 
@@ -54,6 +54,13 @@ export default function MainTabScreen({ navigation }: any) {
           pointerEvents={activeTab === 'Impacts' ? 'auto' : 'none'}
         >
           <ImpactsContent />
+        </View>
+
+        <View
+          style={[styles.tabPane, { zIndex: activeTab === 'Rewards' ? 1 : 0 }]}
+          pointerEvents={activeTab === 'Rewards' ? 'auto' : 'none'}
+        >
+          <RewardsContent />
         </View>
       </View>
 
