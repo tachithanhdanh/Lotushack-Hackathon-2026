@@ -3,14 +3,14 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme/colors';
 import BottomTabBar, { TabItem } from '../components/BottomTabBar';
-import { LiveGreenRingContent } from './LiveGreenRingScreen';
+import { JourneyContent } from './JourneyScreen';
 import { ImpactsContent } from './ImpactsScreen';
 
-type TabKey = 'LiveGreenRing' | 'Impacts' | 'Rewards';
+type TabKey = 'Journey' | 'Impacts' | 'Rewards';
 
 const TABS: TabItem[] = [
   { key: 'TascoHome',     icon: 'home-outline', label: 'Trang chủ' },
-  { key: 'LiveGreenRing', icon: 'map',          label: 'Hành trình' },
+  { key: 'Journey',       icon: 'navigation-variant', label: 'Hành trình' },
   { key: 'Impacts',       icon: 'leaf',         label: 'Tác động' },
   { key: 'Rewards',       icon: 'gift-outline', label: 'Phần thưởng' },
 ];
@@ -26,7 +26,7 @@ const TABS: TabItem[] = [
  * TascoHome stack screen).
  */
 export default function MainTabScreen({ navigation }: any) {
-  const [activeTab, setActiveTab] = useState<TabKey>('LiveGreenRing');
+  const [activeTab, setActiveTab] = useState<TabKey>('Journey');
 
   const handleTabPress = (key: string) => {
     if (key === 'TascoHome') {
@@ -42,10 +42,10 @@ export default function MainTabScreen({ navigation }: any) {
       <View style={styles.content}>
         {/* Hành trình tab */}
         <View
-          style={[styles.tabPane, { zIndex: activeTab === 'LiveGreenRing' ? 1 : 0 }]}
-          pointerEvents={activeTab === 'LiveGreenRing' ? 'auto' : 'none'}
+          style={[styles.tabPane, { zIndex: activeTab === 'Journey' ? 1 : 0 }]}
+          pointerEvents={activeTab === 'Journey' ? 'auto' : 'none'}
         >
-          <LiveGreenRingContent />
+          <JourneyContent navigation={navigation} />
         </View>
 
         {/* Tác động tab */}
