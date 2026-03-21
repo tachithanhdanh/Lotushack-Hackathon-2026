@@ -1,17 +1,19 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { MD3Colors } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export type ServiceGridItemProps = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap | string;
   label: string;
+  /** Renders a brand circle logo (navy circle with gold "C") instead of an icon */
+  isBrand?: boolean;
   onPress?: () => void;
 };
 
 export default function ServiceGridItem({
   icon,
   label,
+  isBrand,
   onPress,
 }: ServiceGridItemProps) {
   return (
@@ -20,11 +22,17 @@ export default function ServiceGridItem({
       onPress={onPress}
     >
       <View style={styles.iconWrap}>
-        <MaterialCommunityIcons
-          name={icon as any}
-          size={22}
-          color={MD3Colors.primary80}
-        />
+        {isBrand ? (
+          <View style={styles.brandCircle}>
+            <Text style={styles.brandLetter}>C</Text>
+          </View>
+        ) : (
+          <MaterialCommunityIcons
+            name={icon as any}
+            size={28}
+            color="#333"
+          />
+        )}
       </View>
       <Text style={styles.label} numberOfLines={2}>
         {label}
@@ -35,21 +43,37 @@ export default function ServiceGridItem({
 
 const styles = StyleSheet.create({
   item: {
-    width: "23%",
-    margin: "1%",
+    width: "25%",
+    paddingHorizontal: 4,
+    paddingVertical: 8,
     alignItems: "center",
   },
   iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: "#eef2ff",
+    width: 60,
+    height: 60,
+    borderRadius: 14,
+    backgroundColor: "#F2F2F2",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 6,
+    marginBottom: 8,
+  },
+  brandCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#1A2B6D",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  brandLetter: {
+    color: "#FFD700",
+    fontSize: 20,
+    fontWeight: "800",
   },
   label: {
     textAlign: "center",
     fontSize: 12,
+    color: "#333",
+    lineHeight: 16,
   },
 });

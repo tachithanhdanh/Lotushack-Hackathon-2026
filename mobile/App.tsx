@@ -86,7 +86,7 @@ export default function App() {
             <Stack.Screen
               name="TascoHome"
               component={TascoHomeScreen}
-              options={{ title: "Tasco VETC" }}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="VehicleControls"

@@ -1,0 +1,14 @@
+{
+    "USR001": {
+        "username": "minhminh",
+        "name": "Nguyễn Ngọc Minh",
+        "gmail": "minhminh@gmail.com",
+        "phone_number": "0911666888"
+    },
+    "USR002": {
+        "username": "ngoclan",
+        "gmail": "ngoclan@gmail.com",
+        "name": "Ngô Ngọc Lan",
+        "phone_number": "0911666888"
+    }
+}
