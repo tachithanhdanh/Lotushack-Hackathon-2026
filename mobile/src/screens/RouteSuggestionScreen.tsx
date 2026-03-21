@@ -2,7 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Card, TextInput, Chip } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../theme/colors";
+import { Colors as colors } from "../theme/colors";
+
 
 function RouteCard({ title, time, co2, points, onSelect }: any) {
   return (

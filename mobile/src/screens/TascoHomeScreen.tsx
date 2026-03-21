@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ServiceGridItem from "../components/ServiceGridItem";
 import AppButton from "../components/AppButton";
 import BottomTabBar, { TabItem } from "../components/BottomTabBar";
-import { Colors } from "../theme/colors";
+import { colors } from "../theme/colors";
+
 
 type SuggestionItem = { icon: string; label: string; isBrand?: boolean };
 type UtilityItem = { icon: string; label: string; screen?: string };
@@ -75,7 +76,7 @@ export default function TascoHomeScreen({ navigation }: any) {
                 <MaterialCommunityIcons
                   name="pencil-outline"
                   size={14}
-                  color={Colors.textSecondary}
+                  color={colors.textSecondary}
                   style={{ marginLeft: 6 }}
                 />
               </View>
@@ -89,7 +90,7 @@ export default function TascoHomeScreen({ navigation }: any) {
                 <MaterialCommunityIcons
                   name="chevron-right"
                   size={18}
-                  color={Colors.textPrimary}
+                  color={colors.textPrimary}
                 />
               </Pressable>
             </View>
@@ -140,12 +141,12 @@ export default function TascoHomeScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
 
   // Header
-  headerSafe: { backgroundColor: Colors.primaryLight },
+  headerSafe: { backgroundColor: colors.primaryLight },
   header: {
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 16,
@@ -153,13 +154,13 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 16,
     fontWeight: "700",
-    color: Colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
 
   // Banner
   banner: {
-    backgroundColor: Colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     height: 110,
     flexDirection: "row",
@@ -169,15 +170,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   bannerBrand: {
-    color: Colors.textOnPrimary,
+    color: colors.textOnPrimary,
     fontSize: 18,
     fontWeight: "800",
     marginBottom: 4,
   },
-  bannerVetc: { color: Colors.textOnPrimary, fontSize: 12, fontWeight: "600" },
+  bannerVetc: { color: colors.textOnPrimary, fontSize: 12, fontWeight: "600" },
   bannerRight: { alignItems: "flex-end" },
   bannerSlogan: {
-    color: Colors.textOnPrimary,
+    color: colors.textOnPrimary,
     fontSize: 16,
     fontWeight: "800",
     textAlign: "right",
@@ -190,17 +191,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   walletLabelRow: { flexDirection: "row", alignItems: "center" },
-  walletLabel: { fontSize: 13, color: Colors.textSecondary },
+  walletLabel: { fontSize: 13, color: colors.textSecondary },
   balanceRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   balance: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.textPrimary,
+    color: colors.textPrimary,
     marginRight: 2,
   },
 
   // Scroll content
-  scroll: { flex: 1, backgroundColor: Colors.background },
+  scroll: { flex: 1, backgroundColor: colors.background },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 20,
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   gridRow: {

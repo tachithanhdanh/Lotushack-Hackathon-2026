@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Card, ProgressBar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../theme/colors";
+import { Colors as colors } from "../theme/colors";
 
 export default function Co2MeterScreen() {
   const [running, setRunning] = React.useState(false);

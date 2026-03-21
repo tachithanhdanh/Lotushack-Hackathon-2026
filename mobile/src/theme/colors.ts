@@ -1,6 +1,12 @@
 /**
  * App-wide color palette.
- * Import `Colors` wherever you need a color — never hardcode hex strings in components.
+ * Import `Colors` (or the `colors` alias) wherever you need a color.
+ * Never hardcode hex strings in components.
+ *
+ * Usage:
+ *   import { Colors } from "../theme/colors";          // named constant
+ *   import { Colors as colors } from "../theme/colors"; // alias (all screens)
+ *   import { colors } from "../theme/colors";           // lowercase alias (App.tsx / Paper theme)
  */
 export const Colors = {
   // ── Brand ──────────────────────────────────────────────
@@ -8,6 +14,8 @@ export const Colors = {
   primary: "#00A651",
   /** Light mint — header/hero background */
   primaryLight: "#EDF7ED",
+  /** Secondary brand color — used for secondary Paper theme slot */
+  secondary: "#6B7280",
   /** Navy used in the "Mua xe" brand circle */
   brandNavy: "#1A2B6D",
   /** Gold used in the "Mua xe" brand circle letter */
@@ -26,6 +34,10 @@ export const Colors = {
   // ── Surface ────────────────────────────────────────────
   /** Default screen background */
   background: "#FFFFFF",
+  /** Card and elevated surface background */
+  surface: "#FFFFFF",
+  /** Progress bar track / subtle list separators */
+  card: "#F2F2F2",
   /** Icon container background in service grids */
   surfaceLight: "#F2F2F2",
   /** Subtle divider and border color */
@@ -37,5 +49,8 @@ export const Colors = {
   error: "#EF4444",
   info: "#3B82F6",
 } as const;
+
+/** Lowercase alias — use with `import { colors } from "../theme/colors"` */
+export const colors = Colors;
 
 export type ColorKey = keyof typeof Colors;

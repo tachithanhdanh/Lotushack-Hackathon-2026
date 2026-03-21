@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Card, ProgressBar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, Text, View } from "react-native";
-import { colors } from "../theme/colors";
+import { Colors as colors } from "../theme/colors";
 
 export default function LiveGreenRingScreen() {
   const [a, setA] = React.useState(false);
