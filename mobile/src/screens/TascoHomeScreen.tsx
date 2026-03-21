@@ -3,13 +3,12 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ServiceGridItem from "../components/ServiceGridItem";
-
-const GREEN = "#00A651";
-const MINT_BG = "#EDF7ED";
+import AppButton from "../components/AppButton";
+import BottomTabBar, { TabItem } from "../components/BottomTabBar";
+import { Colors } from "../theme/colors";
 
 type SuggestionItem = { icon: string; label: string; isBrand?: boolean };
 type UtilityItem = { icon: string; label: string; screen?: string };
-type TabItem = { key: string; icon: string; label: string };
 
 const SUGGESTIONS: SuggestionItem[] = [
   { icon: "shield-check", label: "Bảo hiểm" },
@@ -67,7 +66,7 @@ export default function TascoHomeScreen({ navigation }: any) {
                 <MaterialCommunityIcons
                   name="pencil-outline"
                   size={14}
-                  color="#555"
+                  color={Colors.textSecondary}
                   style={{ marginLeft: 6 }}
                 />
               </View>
@@ -81,13 +80,11 @@ export default function TascoHomeScreen({ navigation }: any) {
                 <MaterialCommunityIcons
                   name="chevron-right"
                   size={18}
-                  color="#333"
+                  color={Colors.textPrimary}
                 />
               </Pressable>
             </View>
-            <Pressable style={styles.topUpButton}>
-              <Text style={styles.topUpText}>+ Nạp tiền</Text>
-            </Pressable>
+            <AppButton label="+ Nạp tiền" onPress={() => {}} />
           </View>
         </View>
       </SafeAreaView>
@@ -128,45 +125,18 @@ export default function TascoHomeScreen({ navigation }: any) {
       </ScrollView>
 
       {/* ── Bottom tab bar ── */}
-      <SafeAreaView
-        style={styles.tabBarSafe}
-        edges={["bottom", "left", "right"]}
-      >
-        <View style={styles.tabBar}>
-          {TABS.map((tab) => {
-            const isActive = activeTab === tab.key;
-            return (
-              <Pressable
-                key={tab.key}
-                style={styles.tabItem}
-                onPress={() => setActiveTab(tab.key)}
-              >
-                <MaterialCommunityIcons
-                  name={tab.icon as any}
-                  size={24}
-                  color={isActive ? GREEN : "#9E9E9E"}
-                />
-                <Text
-                  style={[styles.tabLabel, isActive && styles.tabLabelActive]}
-                >
-                  {tab.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </SafeAreaView>
+      <BottomTabBar tabs={TABS} activeKey={activeTab} onPress={setActiveTab} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: Colors.background },
 
   // Header
-  headerSafe: { backgroundColor: MINT_BG },
+  headerSafe: { backgroundColor: Colors.primaryLight },
   header: {
-    backgroundColor: MINT_BG,
+    backgroundColor: Colors.primaryLight,
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 16,
@@ -174,13 +144,13 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1A1A1A",
+    color: Colors.textPrimary,
     marginBottom: 12,
   },
 
   // Banner
   banner: {
-    backgroundColor: GREEN,
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     height: 110,
     flexDirection: "row",
@@ -190,15 +160,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   bannerBrand: {
-    color: "#fff",
+    color: Colors.textOnPrimary,
     fontSize: 18,
     fontWeight: "800",
     marginBottom: 4,
   },
-  bannerVetc: { color: "#fff", fontSize: 12, fontWeight: "600" },
+  bannerVetc: { color: Colors.textOnPrimary, fontSize: 12, fontWeight: "600" },
   bannerRight: { alignItems: "flex-end" },
   bannerSlogan: {
-    color: "#fff",
+    color: Colors.textOnPrimary,
     fontSize: 16,
     fontWeight: "800",
     textAlign: "right",
@@ -211,19 +181,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   walletLabelRow: { flexDirection: "row", alignItems: "center" },
-  walletLabel: { fontSize: 13, color: "#555" },
+  walletLabel: { fontSize: 13, color: Colors.textSecondary },
   balanceRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
-  balance: { fontSize: 18, fontWeight: "700", color: "#111", marginRight: 2 },
-  topUpButton: {
-    backgroundColor: GREEN,
-    borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  balance: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    marginRight: 2,
   },
-  topUpText: { color: "#fff", fontWeight: "700", fontSize: 14 },
 
   // Scroll content
-  scroll: { flex: 1, backgroundColor: "#fff" },
+  scroll: { flex: 1, backgroundColor: Colors.background },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 20,
@@ -232,7 +200,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1A1A1A",
+    color: Colors.textPrimary,
     marginBottom: 12,
   },
   gridRow: {
@@ -240,21 +208,4 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     marginBottom: 24,
   },
-
-  // Bottom tab bar
-  tabBarSafe: { backgroundColor: "#fff" },
-  tabBar: {
-    flexDirection: "row",
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#E0E0E0",
-    backgroundColor: "#fff",
-    paddingVertical: 4,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 6,
-  },
-  tabLabel: { fontSize: 11, color: "#9E9E9E", marginTop: 2 },
-  tabLabelActive: { color: GREEN, fontWeight: "600" },
 });

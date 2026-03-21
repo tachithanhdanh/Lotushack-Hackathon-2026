@@ -1,112 +1,193 @@
-# Component Documentation — TascoHomeScreen
+# Component & Theme Documentation
+
+## Theme
+
+### `src/theme/colors.ts`
+
+Single source of truth for all colors. **Never hardcode hex strings in components — always import from here.**
+
+```ts
+import { Colors } from "../theme/colors";
+```
+
+| Token | Value | Use |
+|---|---|---|
+| `Colors.primary` | `#00A651` | Buttons, active states, banner, highlights |
+| `Colors.primaryLight` | `#EDF7ED` | Header / hero background |
+| `Colors.brandNavy` | `#1A2B6D` | "Mua xe" brand circle background |
+| `Colors.brandGold` | `#FFD700` | "Mua xe" brand circle letter |
+| `Colors.textPrimary` | `#1A1A1A` | Main body text |
+| `Colors.textSecondary` | `#555555` | Supporting text, labels |
+| `Colors.textMuted` | `#9E9E9E` | Placeholder, inactive, disabled |
+| `Colors.textOnPrimary` | `#FFFFFF` | Text on green/colored backgrounds |
+| `Colors.background` | `#FFFFFF` | Default screen background |
+| `Colors.surfaceLight` | `#F2F2F2` | Icon container background |
+| `Colors.border` | `#E0E0E0` | Dividers, borders, tab bar top line |
+| `Colors.success` | `#00A651` | Success feedback |
+| `Colors.warning` | `#F59E0B` | Warning feedback |
+| `Colors.error` | `#EF4444` | Error feedback |
+| `Colors.info` | `#3B82F6` | Info feedback |
+
+---
+
+## Components
+
+### `AppButton`
+
+**File:** `src/components/AppButton.tsx`
+
+Reusable button. Covers all call-to-action patterns in the app.
+
+```tsx
+import AppButton from "../components/AppButton";
+
+// Primary (default)
+<AppButton label="+ Nạp tiền" onPress={handleTopUp} />
+
+// Outline
+<AppButton label="Xem thêm" variant="outline" onPress={handleMore} />
+
+// Ghost (text-only)
+<AppButton label="Bỏ qua" variant="ghost" onPress={handleSkip} />
+
+// With icons
+<AppButton label="Đặt lịch" iconLeft="calendar-check" onPress={handleBook} />
+<AppButton label="Tiếp tục" iconRight="chevron-right" onPress={handleNext} />
+
+// Sizes
+<AppButton label="Nhỏ" size="sm" onPress={...} />
+<AppButton label="Vừa" size="md" onPress={...} />   // default
+<AppButton label="Lớn" size="lg" onPress={...} />
+
+// Full width
+<AppButton label="Xác nhận" onPress={handleConfirm} fullWidth />
+
+// Loading / disabled
+<AppButton label="Đang xử lý..." loading onPress={...} />
+<AppButton label="Không khả dụng" disabled onPress={...} />
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `string` | — | Button text |
+| `onPress` | `() => void` | — | Tap handler |
+| `variant` | `"primary" \| "outline" \| "ghost"` | `"primary"` | Visual style |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size preset |
+| `iconLeft` | `string` (MCI glyph) | — | Icon before label |
+| `iconRight` | `string` (MCI glyph) | — | Icon after label |
+| `fullWidth` | `boolean` | `false` | Stretch to fill parent |
+| `loading` | `boolean` | `false` | Shows spinner, disables tap |
+| `disabled` | `boolean` | `false` | Dims and disables tap |
+
+#### Variant anatomy
+
+```
+primary  → green fill, white text
+outline  → transparent fill, green border + text
+ghost    → no fill, no border, green text
+```
+
+---
+
+### `BottomTabBar`
+
+**File:** `src/components/BottomTabBar.tsx`
+
+App-wide bottom navigation bar. Handles its own bottom safe-area inset — do **not** wrap it in another `SafeAreaView`.
+
+```tsx
+import BottomTabBar, { TabItem } from "../components/BottomTabBar";
+
+const TABS: TabItem[] = [
+  { key: "home",          icon: "home",           label: "Trang chủ" },
+  { key: "wallet",        icon: "wallet",          label: "Ví của tôi" },
+  { key: "notifications", icon: "bell-outline",    label: "Thông báo" },
+  { key: "account",       icon: "account-outline", label: "Tài khoản" },
+];
+
+// Inside your screen:
+const [activeTab, setActiveTab] = useState("home");
+
+<BottomTabBar tabs={TABS} activeKey={activeTab} onPress={setActiveTab} />
+```
+
+#### Props
+
+| Prop | Type | Description |
+|---|---|---|
+| `tabs` | `TabItem[]` | Ordered list of tab definitions |
+| `activeKey` | `string` | `key` of the currently active tab |
+| `onPress` | `(key: string) => void` | Called when user taps a tab |
+
+#### `TabItem` type
+
+| Field | Type | Description |
+|---|---|---|
+| `key` | `string` | Unique identifier |
+| `icon` | `string` (MCI glyph) | Icon shown above label |
+| `label` | `string` | Text shown below icon |
+
+> **Roadmap note:** Currently `onPress` just updates local state. To route between real screens, replace `Stack.Navigator` in `App.tsx` with `createBottomTabNavigator` and pass `navigation.navigate` as the `onPress` handler.
+
+---
+
+### `ServiceGridItem`
+
+**File:** `src/components/ServiceGridItem.tsx`
+
+Pressable grid cell used in service sections (Đề xuất, Tiện ích).
+
+```tsx
+import ServiceGridItem from "../components/ServiceGridItem";
+
+<ServiceGridItem icon="shield-check" label="Bảo hiểm" />
+<ServiceGridItem icon="car-hatchback" label="Mua xe" isBrand />
+<ServiceGridItem icon="map-marker" label="Điểm dịch vụ" onPress={() => navigation.navigate("VehicleControls")} />
+```
+
+#### Props
+
+| Prop | Type | Description |
+|---|---|---|
+| `icon` | `string` (MCI glyph) | Icon inside the rounded-square container |
+| `label` | `string` | Text below icon, wraps to 2 lines |
+| `isBrand` | `boolean` | Replaces icon with navy circle + gold "C" (Mua xe) |
+| `onPress` | `() => void` | Optional tap handler |
+
+Layout: `width: 25%` — always 4 items per row. Place inside a `flexWrap: "wrap"` row.
+
+---
 
 ## Screen: `TascoHomeScreen`
 
 **File:** `src/screens/TascoHomeScreen.tsx`
-**Route name:** `TascoHome` (no header — `headerShown: false` in App.tsx)
-
-The main landing screen of the Tasco VETC app. Composed of three visual zones stacked vertically: a mint-green header, a scrollable body, and a fixed bottom tab bar.
+**Route:** `TascoHome` — `headerShown: false` in `App.tsx`
 
 ```
 ┌─────────────────────────────────┐
-│  SafeAreaView (mint bg)         │  ← top inset handled here
-│  ┌─────────────────────────┐   │
-│  │  Greeting text           │   │
-│  │  Promo Banner (green)    │   │
-│  │  Wallet row              │   │
-│  └─────────────────────────┘   │
+│  SafeAreaView (Colors.primaryLight)   top inset
+│    Greeting text
+│    Promo Banner  (Colors.primary)
+│    Wallet row  +  <AppButton "Nạp tiền">
 ├─────────────────────────────────┤
-│  ScrollView (white bg)          │
-│    Section: Đề xuất  (4 items)  │
-│    Section: Tiện ích (8 items)  │
+│  ScrollView (Colors.background)
+│    "Đề xuất"  → 4 × ServiceGridItem
+│    "Tiện ích" → 8 × ServiceGridItem
 ├─────────────────────────────────┤
-│  SafeAreaView (white bg)        │  ← bottom inset handled here
-│  BottomTabBar                   │
+│  <BottomTabBar>                       bottom inset
 └─────────────────────────────────┘
 ```
 
 ### Local state
 
-| State | Type | Default | Purpose |
-|---|---|---|---|
-| `activeTab` | `string` | `"home"` | Tracks which bottom tab is highlighted |
-| `balanceHidden` | `boolean` | `true` | Toggles masked `*******` vs real balance display |
-
-### Data constants
-
-| Constant | Type | Role |
+| State | Default | Purpose |
 |---|---|---|
-| `SUGGESTIONS` | `SuggestionItem[]` | 4 items rendered in the "Đề xuất" grid |
-| `UTILITIES` | `UtilityItem[]` | 8 items rendered in the "Tiện ích" grid; items with `screen` navigate on press |
-| `TABS` | `TabItem[]` | 4 bottom tab definitions |
+| `activeTab` | `"home"` | Passed to `BottomTabBar` as `activeKey` |
+| `balanceHidden` | `true` | Toggles `*******` vs real balance |
 
----
+### Adding a new service item
 
-## Component: `ServiceGridItem`
-
-**File:** `src/components/ServiceGridItem.tsx`
-
-A pressable grid cell used in both the "Đề xuất" and "Tiện ích" sections.
-Renders a rounded-square icon container (60×60, `borderRadius: 14`) above a two-line label.
-
-### Props
-
-| Prop | Type | Required | Description |
-|---|---|---|---|
-| `icon` | `string` (MaterialCommunityIcons glyph) | Yes | Icon name drawn inside the container |
-| `label` | `string` | Yes | Text below the icon; wraps to 2 lines max |
-| `isBrand` | `boolean` | No | When `true`, replaces the icon with a navy circle containing a gold "C" (used for "Mua xe") |
-| `onPress` | `() => void` | No | Called when the item is tapped; no-op if omitted |
-
-### Visual anatomy
-
-```
-┌──────────────────┐
-│   ┌──────────┐   │
-│   │  icon    │   │   60×60 rounded square, bg #F2F2F2
-│   │  or 🅒   │   │   (isBrand → navy circle with gold "C")
-│   └──────────┘   │
-│    label text     │   12px, centered, up to 2 lines
-└──────────────────┘
-  width: 25% of parent (4 per row)
-```
-
----
-
-## Sub-section: Header Zone
-
-Rendered inside `SafeAreaView` with `edges={["top","left","right"]}` so the status-bar area inherits the mint background (`#EDF7ED`).
-
-| Element | Role |
-|---|---|
-| Greeting text | Personalised welcome line — replace hardcoded name with auth user data |
-| Promo Banner | Green `View` (`#00A651`) standing in for the real LÀN ETC image asset; swap with `<Image>` once assets are available |
-| Wallet label + balance | Displays masked `*******` by default; tap to toggle reveal |
-| "+ Nạp tiền" button | Top-up CTA — wire to payment flow |
-
----
-
-## Sub-section: Bottom Tab Bar
-
-Rendered inside its own `SafeAreaView` with `edges={["bottom","left","right"]}` so the home-indicator area stays white.
-
-| Tab key | Icon | Label | Current behaviour |
-|---|---|---|---|
-| `home` | `home` | Trang chủ | Active by default; no navigation |
-| `wallet` | `wallet` | Ví của tôi | Sets `activeTab` only |
-| `notifications` | `bell-outline` | Thông báo | Sets `activeTab` only |
-| `account` | `account-outline` | Tài khoản | Sets `activeTab` only |
-
-> **Note:** The tab bar is currently cosmetic (local state only). To connect it to real screens, replace the `Stack.Navigator` in `App.tsx` with a `createBottomTabNavigator` wrapping the individual screen stacks.
-
----
-
-## Colors
-
-| Token | Value | Used for |
-|---|---|---|
-| `GREEN` | `#00A651` | Primary action color, active tab, banner, top-up button |
-| `MINT_BG` | `#EDF7ED` | Header background |
-| Icon container bg | `#F2F2F2` | `ServiceGridItem` icon wrap |
-| Brand circle | `#1A2B6D` | "Mua xe" navy circle |
-| Brand letter | `#FFD700` | "C" glyph in brand circle |
+1. Add an entry to `SUGGESTIONS` or `UTILITIES` in `TascoHomeScreen.tsx`.
+2. If it navigates somewhere, add `screen: "RouteName"` — the route must exist in `RootStackParamList` in `App.tsx`.
