@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Green Points",
-    "slug": "green-points",
+    "name": "CarBon",
+    "slug": "carbon",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lotushacks.greenpoints"
+      "bundleIdentifier": "com.fourofwands.carbon"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.lotushacks.greenpoints"
+      "package": "com.fourofwands.carbon"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +36,10 @@
     "extra": {
       "eas": {
         "projectId": "00c3acc9-1872-4bd0-bab4-eb6c15c4aae9"
+      },
+      "brand": {
+        "team": "Four of Wands",
+        "product": "CarBon"
       }
     }
   }
