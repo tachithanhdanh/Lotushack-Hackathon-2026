@@ -12,13 +12,15 @@
       "distribution": "internal",
       "android": {
         "image": "sdk-54"
-      }
+      },
+      "node": "20"
     },
     "production": {
       "autoIncrement": true,
       "android": {
         "image": "sdk-54"
-      }
+      },
+      "node": "20"
     }
   },
   "submit": {
