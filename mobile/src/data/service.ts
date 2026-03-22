@@ -34,10 +34,16 @@ import {
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
 
-/** Seed all collections if the store has never been initialised. */
+/** Bump this string whenever seed data changes to force a full re-seed on next launch. */
+const SEED_VERSION = 'v3';
+const SEED_VERSION_KEY = '__seed_version';
+
+/** Seed all collections if the store has never been initialised, or if the seed version changed. */
 export async function ensureSeeded(): Promise<void> {
-  const seeded = await store.isSeeded();
-  if (seeded) return;
+  const storedVersion = await store.getSingleton<string>(SEED_VERSION_KEY);
+  if (storedVersion === SEED_VERSION) return;
+  // Version mismatch or fresh install — wipe and re-seed
+  await store.nukeAll();
   await Promise.all([
     store.seed(COLLECTIONS.USERS, SEED_USERS),
     store.seed(COLLECTIONS.DAILY_RINGS, SEED_DAILY_RINGS),
@@ -47,6 +53,7 @@ export async function ensureSeeded(): Promise<void> {
     store.seed(COLLECTIONS.LEADERBOARD, SEED_LEADERBOARD),
     store.setSingleton(SINGLETONS.COMMUNITY_STATS, SEED_COMMUNITY_STATS),
     store.setSingleton(SINGLETONS.CURRENT_USER_ID, SEED_CURRENT_USER_ID),
+    store.setSingleton(SEED_VERSION_KEY, SEED_VERSION),
   ]);
 }
 
@@ -87,7 +94,10 @@ export async function deleteUser(id: string): Promise<void> {
 
 export async function getTodayRing(): Promise<DailyRing | null> {
   const today = todayKey();
-  return store.getById<DailyRing>(COLLECTIONS.DAILY_RINGS, today);
+  const ring = await store.getById<DailyRing>(COLLECTIONS.DAILY_RINGS, today);
+  if (ring) return ring;
+  // No ring for today yet — create a fresh one with default tasks
+  return _createRingForDate(today);
 }
 
 export async function getRing(date: string): Promise<DailyRing | null> {
@@ -126,7 +136,7 @@ export async function toggleRingTask(date: string, taskId: string): Promise<Dail
       pts: toggled.pts,
     });
   } else {
-    await _revokePoints(`ring_task:${date}:${taskId}`);
+    await _revokePoints(toggled.pts);
   }
 
   return updated;
@@ -364,9 +374,30 @@ async function _awardPoints(opts: {
   await store.add<PointsEntry>(COLLECTIONS.POINTS_LEDGER, entry);
 }
 
-async function _revokePoints(_entryId: string): Promise<void> {
-  // Simplified: just deduct from user balance based on last matching entry.
-  // A full implementation would look up the entry by id and reverse it.
+async function _revokePoints(pts: number): Promise<void> {
+  const user = await getCurrentUser();
+  const newBalance = Math.max(0, user.greenPoints - pts);
+  await store.update<User>(COLLECTIONS.USERS, user.id, { greenPoints: newBalance });
+}
+
+const DEFAULT_RING_TASKS: RingTask[] = [
+  { id: 'T1', type: 'etc_pass', label: 'Pass 2 ETC fee charging stations', pts: 15, sub: '0/2', done: false },
+  { id: 'T2', type: 'off_peak_depart', label: 'Complete full suggested trip on time', pts: 20, sub: '0/1', done: false },
+  { id: 'T3', type: 'charge', label: 'Use a Tasco fast-charger station', pts: 15, done: false },
+  { id: 'T4', type: 'use_etc_lane', label: 'Use ETC lane (no stopping)', pts: 5, done: false },
+];
+
+async function _createRingForDate(date: string): Promise<DailyRing> {
+  const ring: DailyRing = {
+    id: date,
+    date,
+    tasks: DEFAULT_RING_TASKS.map((t) => ({ ...t })),
+    progressPct: 0,
+    streakDay: 1,
+    bonusAwarded: false,
+  };
+  await store.add<DailyRing>(COLLECTIONS.DAILY_RINGS, ring);
+  return ring;
 }
 
 // ── Eco grade helper (reusable in screens) ─────────────────────────────────────

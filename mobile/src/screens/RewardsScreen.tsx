@@ -2,6 +2,7 @@ import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../theme/colors";
+import { ensureSeeded, getCurrentUser, updateCurrentUser } from "../data/service";
 
 type RewardCategory = "All" | "VETC Toll" | "Fuel" | "EV Charging" | "Insurance";
 
@@ -20,8 +21,6 @@ type BadgeItem = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   description: string;
 };
-
-const INITIAL_POINTS = 1200;
 
 const FILTERS: RewardCategory[] = ["All", "VETC Toll", "Fuel", "EV Charging", "Insurance"];
 
@@ -235,12 +234,20 @@ function BadgeCard({
 
 export function RewardsContent() {
   const [selectedFilter, setSelectedFilter] = React.useState<RewardCategory>("All");
-  const [points, setPoints] = React.useState(INITIAL_POINTS);
+  const [points, setPoints] = React.useState(0);
   const [claimedIds, setClaimedIds] = React.useState<string[]>([]);
   const [walletOpen, setWalletOpen] = React.useState(false);
   const [showAllBadges, setShowAllBadges] = React.useState(false);
   const [selectedBadgeId, setSelectedBadgeId] = React.useState(BADGES[0].id);
   const [statusText, setStatusText] = React.useState("Tap a reward to claim it into your wallet.");
+
+  React.useEffect(() => {
+    (async () => {
+      await ensureSeeded();
+      const user = await getCurrentUser();
+      setPoints(user.greenPoints);
+    })();
+  }, []);
 
   const selectedBadge = React.useMemo(
     () => BADGES.find((item) => item.id === selectedBadgeId) ?? BADGES[0],
@@ -270,7 +277,7 @@ export function RewardsContent() {
     return REWARDS.filter((item) => item.category === label).length;
   };
 
-  const handleClaim = (item: RewardItem) => {
+  const handleClaim = async (item: RewardItem) => {
     if (claimedIds.includes(item.id)) {
       setWalletOpen(true);
       setStatusText(`Voucher ${item.voucherCode} is already in your wallet.`);
@@ -282,7 +289,9 @@ export function RewardsContent() {
       return;
     }
 
-    setPoints((current) => current - item.points);
+    const newBalance = points - item.points;
+    await updateCurrentUser({ greenPoints: newBalance });
+    setPoints(newBalance);
     setClaimedIds((current) => [...current, item.id]);
     setWalletOpen(true);
     setStatusText(`Claimed ${item.voucherCode}. Check Voucher Wallet to use it.`);
