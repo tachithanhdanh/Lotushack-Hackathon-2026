@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Green Points",
+    "slug": "green-points",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.mobile"
+      "bundleIdentifier": "com.lotushacks.greenpoints"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.mobile"
+      "package": "com.lotushacks.greenpoints"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +32,11 @@
       "expo-font",
       "@rnmapbox/maps",
       "expo-video"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "00c3acc9-1872-4bd0-bab4-eb6c15c4aae9"
+      }
+    }
   }
 }

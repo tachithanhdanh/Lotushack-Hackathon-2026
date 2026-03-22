@@ -12,12 +12,18 @@
       "distribution": "internal",
       "android": {
         "image": "sdk-54"
+      },
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
         "image": "sdk-54"
+      },
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "${EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN}"
       }
     }
   },
