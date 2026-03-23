@@ -4,7 +4,7 @@ This folder contains design-driven documentation extracted from the FigJam board
 
 LotusHacks x HackHarvard x GenAI
 
-- Board: https://www.figma.com/board/Ffu8llcJOrNA7DIIJ7Bxmp/LotusHacks-x-HackHarvard-x-GenAI
+- Use Case Spec: [https://docs.google.com/document/d/1dejNvCFtjgMtbTJfNXTZNOXVV__jiU7l/edit?usp=sharing&ouid=112966717395914941930&rtpof=true&sd=true](url)
 
 Contents (Light mode, tiếng Việt)
 
